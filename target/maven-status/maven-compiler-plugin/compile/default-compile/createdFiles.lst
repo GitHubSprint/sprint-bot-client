@@ -1,0 +1,14 @@
+pl\sprint\chatbot\client\test\TestThread.class
+pl\sprint\chatbot\client\Session.class
+pl\sprint\chatbot\client\TTSResponse.class
+pl\sprint\chatbot\client\ChatBot.class
+pl\sprint\chatbot\client\Main.class
+pl\sprint\chatbot\client\ChatBotData.class
+pl\sprint\chatbot\client\Main$1.class
+pl\sprint\chatbot\client\CountSessions.class
+pl\sprint\chatbot\client\test\TestThreadVectra.class
+pl\sprint\chatbot\client\Main$2.class
+pl\sprint\chatbot\client\TTSRequest.class
+pl\sprint\chatbot\client\ClientService.class
+pl\sprint\chatbot\client\test\TestThreadNoClose.class
+pl\sprint\chatbot\client\ChatBotDTO.class
