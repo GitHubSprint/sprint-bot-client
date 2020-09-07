@@ -7,8 +7,8 @@ package pl.sprint.chatbot.client.test;
 
 import java.util.HashMap;
 import java.util.Map;
-import pl.sprint.chatbot.client.ClientService;
-import pl.sprint.chatbot.client.Session;
+import pl.sprint.chatbot.client.service.ClientService;
+import pl.sprint.chatbot.client.model.Session;
 
 /**
  *

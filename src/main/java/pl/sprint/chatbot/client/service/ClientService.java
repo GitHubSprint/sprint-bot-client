@@ -3,9 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package pl.sprint.chatbot.client;
+package pl.sprint.chatbot.client.service;
 
 
+import pl.sprint.chatbot.client.model.ChatBotData;
+import pl.sprint.chatbot.client.model.ChatBotDTO;
+import pl.sprint.chatbot.client.model.ChatBot;
+import pl.sprint.chatbot.client.model.CountSessions;
+import pl.sprint.chatbot.client.model.Session;
+import pl.sprint.chatbot.client.model.TTSRequest;
+import pl.sprint.chatbot.client.model.TTSResponse;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientHandlerException;
 import com.sun.jersey.api.client.ClientResponse;
@@ -167,12 +174,7 @@ public class ClientService {
     private Client client()
     {
         DefaultClientConfig defaultClientConfig = new DefaultClientConfig();
-        defaultClientConfig.getClasses().add(JacksonJsonProvider.class);
-//        Client client = Client.create(defaultClientConfig);
-        
-        
-//        ClientConfig clientConfig = new DefaultClientConfig();
-//        clientConfig.getFeatures().put(JSONConfiguration.FEATURE_POJO_MAPPING, Boolean.TRUE);        
+        defaultClientConfig.getClasses().add(JacksonJsonProvider.class);     
         return Client.create(defaultClientConfig);
     }
     

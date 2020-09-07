@@ -5,6 +5,7 @@
  */
 package pl.sprint.chatbot.client;
 
+import pl.sprint.chatbot.client.service.ClientService;
 import java.io.IOException;
 import pl.sprint.chatbot.client.test.TestThread;
 import java.security.KeyManagementException;
@@ -20,23 +21,18 @@ import pl.sprint.chatbot.client.test.TestThreadNoClose;
 import pl.sprint.chatbot.client.test.TestThreadVectra;
 
 /**
- *
+ * Main Class for SprintBot stress tests.
  * @author skost
  */
 public class Main
-{
-    //private static String endpoint =  "http://192.168.254.191/api";
+{    
     private static String endpoint =  "http://192.168.1.100/api";
     private final static String API_KEY = "Sprint";
     
     public static void main(String[] args) throws InterruptedException, IOException
     {
         ClientService cs = new ClientService(endpoint);
-        
-        
-        
-        
-        
+                                        
         for(int i=0; i < 100; i++)
         {     
             
@@ -72,41 +68,44 @@ public class Main
     }
     
     
-    
-    private static void disableSslVerification() {
-    try
+    /**
+     * Reoves SSL veryfication
+     */
+    private static void disableSslVerification() 
     {
-        // Create a trust manager that does not validate certificate chains
-        TrustManager[] trustAllCerts = new TrustManager[] {new X509TrustManager() {
-            public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-                return null;
+        try
+        {
+            // Create a trust manager that does not validate certificate chains
+            TrustManager[] trustAllCerts = new TrustManager[] {new X509TrustManager() {
+                public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                    return null;
+                }
+                public void checkClientTrusted(X509Certificate[] certs, String authType) {
+                }
+                public void checkServerTrusted(X509Certificate[] certs, String authType) {
+                }
             }
-            public void checkClientTrusted(X509Certificate[] certs, String authType) {
-            }
-            public void checkServerTrusted(X509Certificate[] certs, String authType) {
-            }
+            };
+
+            // Install the all-trusting trust manager
+            SSLContext sc = SSLContext.getInstance("SSL");
+            sc.init(null, trustAllCerts, new java.security.SecureRandom());
+            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+
+            // Create all-trusting host name verifier
+            HostnameVerifier allHostsValid = new HostnameVerifier() {
+                public boolean verify(String hostname, SSLSession session) {
+                    return true;
+                }
+            };
+
+            // Install the all-trusting host verifier
+            HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (KeyManagementException e) {
+            e.printStackTrace();
         }
-        };
-
-        // Install the all-trusting trust manager
-        SSLContext sc = SSLContext.getInstance("SSL");
-        sc.init(null, trustAllCerts, new java.security.SecureRandom());
-        HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-
-        // Create all-trusting host name verifier
-        HostnameVerifier allHostsValid = new HostnameVerifier() {
-            public boolean verify(String hostname, SSLSession session) {
-                return true;
-            }
-        };
-
-        // Install the all-trusting host verifier
-        HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
-    } catch (NoSuchAlgorithmException e) {
-        e.printStackTrace();
-    } catch (KeyManagementException e) {
-        e.printStackTrace();
     }
-}
 
 }

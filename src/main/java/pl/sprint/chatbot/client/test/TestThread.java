@@ -7,8 +7,8 @@ package pl.sprint.chatbot.client.test;
 
 import java.util.HashMap;
 import java.util.Map;
-import pl.sprint.chatbot.client.ClientService;
-import pl.sprint.chatbot.client.Session;
+import pl.sprint.chatbot.client.service.ClientService;
+import pl.sprint.chatbot.client.model.Session;
 
 /**
  *
@@ -38,8 +38,7 @@ public class TestThread implements Runnable
     {
         try {
                     
-            
-            //{"city":"Siedlce","street":"Sokołowska","flat":"54","customerId":"777280","termindozaplaty":"8","saldo":"175,00","termindopobrania":"8","pesel":"43033104152","house":"70"}
+                        
             ClientService cs = new ClientService(endpoint);
             
             Map<String,String> map = new HashMap<>();

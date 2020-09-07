@@ -3,19 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package pl.sprint.chatbot.client;
-
-import java.util.List;
+package pl.sprint.chatbot.client.model;
 
 /**
  *
  * @author skost
  */
-public class TTSRequest 
+public class TTSResponse 
 {
-    
     private String key;
-    private List<String> params;
+    private String value;
 
     public String getKey() {
         return key;
@@ -25,12 +22,12 @@ public class TTSRequest
         this.key = key;
     }
 
-    public List<String> getParams() {
-        return params;
+    public String getValue() {
+        return value;
     }
 
-    public void setParams(List<String> params) {
-        this.params = params;
+    public void setValue(String value) {
+        this.value = value;
     }
     
     
