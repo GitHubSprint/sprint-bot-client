@@ -18,7 +18,7 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import pl.sprint.chatbot.client.test.TestThreadNoClose;
-import pl.sprint.chatbot.client.test.TestThreadVectra;
+import pl.sprint.chatbot.client.test.TestThreadBotWithData;
 
 /**
  * Main Class for SprintBot stress tests.
@@ -26,43 +26,44 @@ import pl.sprint.chatbot.client.test.TestThreadVectra;
  */
 public class Main
 {    
-    private static String endpoint =  "http://192.168.1.100/api";
+    private final static String ENDPOINT =  "http://192.168.1.100/api";
     private final static String API_KEY = "Sprint";
     
     public static void main(String[] args) throws InterruptedException, IOException
     {
-        ClientService cs = new ClientService(endpoint);
+        ClientService cs = new ClientService(ENDPOINT);
                                         
         for(int i=0; i < 100; i++)
         {     
             
-            
-            TestThread m1=new TestThread(i, endpoint);  
+            TestThread m1=new TestThread(ENDPOINT, API_KEY);  
             Thread t1 =new Thread(m1);  
             t1.start(); 
             Thread.sleep(1000);
             
-            int cnt = cs.countSessions().getCount();
-            System.out.println("cnt: " + cnt);
             
-            cnt = cs.countSessions().getCount();
-            System.out.println("cnt: " + cnt);
             
-            TestThreadVectra m2=new TestThreadVectra(i, endpoint);  
+            TestThreadBotWithData m2=new TestThreadBotWithData(ENDPOINT, API_KEY);  
             Thread t2 =new Thread(m2);  
             t2.start(); 
             Thread.sleep(1000);
+                                    
             
-            cnt = cs.countSessions().getCount();
-            System.out.println("cnt: " + cnt);
-            
-            TestThreadNoClose m3=new TestThreadNoClose(i, endpoint);  
+            TestThreadNoClose m3=new TestThreadNoClose(ENDPOINT, API_KEY);  
             Thread t3 =new Thread(m3);  
             t3.start(); 
             Thread.sleep(1000);
             
-            cnt = cs.countSessions().getCount();
+            int cnt = cs.countSessions().getCount();
             System.out.println("cnt: " + cnt);
+            cnt = cs.countSessions("TEST").getCount();
+            System.out.println("TEST cnt: " + cnt );
+            
+            cnt = cs.countSessions("TEST1").getCount();
+            System.out.println("TEST1 cnt: " + cnt );
+            
+            cnt = cs.countSessions("TEST2").getCount();
+            System.out.println("TEST2 cnt: " + cnt );
         }
         
     }

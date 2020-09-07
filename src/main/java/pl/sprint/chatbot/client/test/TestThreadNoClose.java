@@ -11,21 +11,18 @@ import pl.sprint.chatbot.client.service.ClientService;
 import pl.sprint.chatbot.client.model.Session;
 
 /**
- *
+ * Thest when sessions is not properly closed.
  * @author Sławomir Kostrzewa
  */
 public class TestThreadNoClose implements Runnable
 {
-    private final static String API_KEY = "Sprint";
-
-    private static String endpoint =  "http://192.168.254.191/api";
-    
-    
-    private int nuuOfT = 0;
-    public TestThreadNoClose(int nuuOfT, String endpoint)
-    {
-        this.nuuOfT = nuuOfT; 
+    private String api_key = "Sprint";
+    private String endpoint =  "http://192.168.254.191/api";
+            
+    public TestThreadNoClose(String endpoint, String api_key)
+    {        
         this.endpoint = endpoint;
+        this.api_key = api_key;
     }
     
     @Override
@@ -50,26 +47,26 @@ public class TestThreadNoClose implements Runnable
             map.put("termindopobrania", "8");
             map.put("pesel", "43033104152");
             map.put("house", "70");
-            Session session = cs.createSession(API_KEY, "windykacja","IVR","IVR",map);
+            Session session = cs.createSession(api_key, "windykacja","TEST2","TEST",map);
             cs.getData(session.getSessionId()).getEntity(String.class); 
             Thread.sleep(1000);
-            cs.chat(session.getSessionId(), "start Pan GODLEWSKI-ADAM 175 00 1 ", API_KEY).getText();
+            cs.chat(session.getSessionId(), "start Pan GODLEWSKI-ADAM 175 00 1 ", api_key).getText();
             Thread.sleep(1000);
             
-            cs.chat(session.getSessionId(), "tak", API_KEY).getTopic();
+            cs.chat(session.getSessionId(), "tak", api_key).getTopic();
             
             
             Thread.sleep(1000);
-            cs.chat(session.getSessionId(), "chwila", API_KEY).getTopic();
+            cs.chat(session.getSessionId(), "chwila", api_key).getTopic();
             
             Thread.sleep(1000);
-            cs.chat(session.getSessionId(), "Siedlce Sokołowska 54 70", API_KEY).getTopic();
+            cs.chat(session.getSessionId(), "Siedlce Sokołowska 54 70", api_key).getTopic();
             //SCENRIUSZ
-            cs.chat(session.getSessionId(), "SCENRIUSZ", API_KEY).getTopic();
+            cs.chat(session.getSessionId(), "SCENRIUSZ", api_key).getTopic();
             Thread.sleep(1000);
-            cs.chat(session.getSessionId(), "dzisiaj", API_KEY).getTopic();
+            cs.chat(session.getSessionId(), "dzisiaj", api_key).getTopic();
             Thread.sleep(2000);            
-            cs.chat(session.getSessionId(), "TERMINDOXDNI 09/07/2020", API_KEY).getTopic();
+            cs.chat(session.getSessionId(), "TERMINDOXDNI 09/07/2020", api_key).getTopic();
             
             
         } catch (Exception e) {

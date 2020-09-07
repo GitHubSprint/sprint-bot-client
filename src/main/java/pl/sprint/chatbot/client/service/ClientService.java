@@ -25,7 +25,7 @@ import java.util.Map;
 import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
 
 /**
- *
+ * SprintBot client service class.
  * @author skost
  */
 public class ClientService {
@@ -33,32 +33,47 @@ public class ClientService {
     private int timeout = 15000;
     private String endpoint;// = "http://192.168.253.64/api";    
 
-    
-  
-
+    /**
+     * COnstructor 
+     * @param endpoint Bot Endpoint 
+     */
     public ClientService(String endpoint) 
-    {         
-        
+    {                 
         this.endpoint = endpoint;        
     }
 
- 
+    /**
+     * Get and Set Timeout
+     * @return 
+     */
     public int getTimeout() {
         return timeout;
     }
-
     public void setTimeout(int timeout) {
         this.timeout = timeout;
     }
 
+    /**
+     * Get and set Endpoint
+     * @return 
+     */
     public String getEndpoint() {
         return endpoint;
     }
-
     public void setEndpoint(String endpoint) {
         this.endpoint = endpoint;
     }
 
+    /**
+     * Create session
+     * @param key chatbot api key
+     * @param botname name of bota
+     * @param channel name of channel like VOICE, CHAT etc.
+     * @param username username e.g. phone number
+     * @param data additional chat data
+     * @return
+     * @throws IOException 
+     */
     public Session createSession(String key, String botname, String channel, String username, Map<String,String> data) throws IOException
     {                
         ChatBotData cbd = new ChatBotData(key,botname, channel, username);
@@ -77,7 +92,14 @@ public class ClientService {
         return response.getEntity(Session.class);
     }
     
-    
+    /**
+     * Removes sessions 
+     * @param sessionId SessionId
+     * @param key Bot API KEY
+     * @param botname name of Bot
+     * @return
+     * @throws IOException 
+     */
     public Session removeSession(String sessionId, String key, String botname) throws IOException
     {        
               
@@ -92,6 +114,15 @@ public class ClientService {
         return response.getEntity(Session.class);
     }
     
+    
+    /**
+     * Retrieve bot data
+     * @param sessionId SessionId
+     * @return
+     * @throws RuntimeException
+     * @throws UniformInterfaceException
+     * @throws ClientHandlerException 
+     */
     public ClientResponse getData(String sessionId) throws RuntimeException, UniformInterfaceException, ClientHandlerException
     {
         WebResource webResource = client().resource(endpoint + "/session/" + sessionId);
@@ -105,7 +136,12 @@ public class ClientService {
         return response;
     }
     
-    
+    /**
+     * Update bot data
+     * @param sessionId SessionId
+     * @param data new data
+     * @return 
+     */
     public Session updateData(String sessionId, Map<String,String> data)
     {
         WebResource webResource = client().resource(endpoint + "/session/" + sessionId);
@@ -119,10 +155,16 @@ public class ClientService {
         return response.getEntity(Session.class);
     }
     
-    
-    public CountSessions countSessions() throws IOException
+    /**
+     * Retrieve count of active sessions.
+     * @param channel name of channel
+     * @return
+     * @throws IOException 
+     */
+    public CountSessions countSessions(String channel) throws IOException
     {        
-        WebResource webResource = client().resource(endpoint + "/session/count");
+        WebResource webResource = client().resource(endpoint + "/session/count?channel=" + channel);
+                
  
         ClientResponse  response = webResource
                 .accept("application/json")
@@ -134,7 +176,30 @@ public class ClientService {
         return response.getEntity(CountSessions.class);
     }
     
+    public CountSessions countSessions() throws IOException
+    {        
+        WebResource webResource = client().resource(endpoint + "/session/count/");
+                
+ 
+        ClientResponse  response = webResource
+                .accept("application/json")
+                .type("application/json").get(ClientResponse.class);         
+        
+        checkStatusResponse(response.getStatus());
+        
+        
+        return response.getEntity(CountSessions.class);
+    }
     
+    /**
+     * Chatting
+     * @param sessionId SessionId
+     * @param chatQuery customer input
+     * @param key Bot API KEY
+     * @return Bot Output
+     * @throws UnsupportedEncodingException
+     * @throws IOException 
+     */
     public ChatBot chat(String sessionId, String chatQuery, String key) throws UnsupportedEncodingException, IOException
     {
         WebResource webResource = client().resource(endpoint + "/chat");
@@ -150,7 +215,11 @@ public class ClientService {
         
     }
     
-    
+    /**
+     * Retrieves TTS
+     * @param req query name
+     * @return 
+     */
     public TTSResponse tts(TTSRequest req)
     {
         WebResource webResource = client().resource(endpoint + "/tts");

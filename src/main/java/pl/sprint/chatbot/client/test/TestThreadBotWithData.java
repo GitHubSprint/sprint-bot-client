@@ -11,19 +11,18 @@ import pl.sprint.chatbot.client.service.ClientService;
 import pl.sprint.chatbot.client.model.Session;
 
 /**
- *
+ * Test with many Bot Data. 
  * @author Sławomir Kostrzewa
  */
-public class TestThreadVectra implements Runnable
+public class TestThreadBotWithData implements Runnable
 {
-    private final static String API_KEY = "Sprint";
-    private static String endpoint =  "http://192.168.254.191/api";
-
-    private int nuuOfT = 0;
-    public TestThreadVectra(int nuuOfT, String endpoint)
-    {
-        this.nuuOfT = nuuOfT; 
+    private String api_key = "Sprint";
+    private String endpoint =  "http://192.168.254.191/api";
+    
+    public TestThreadBotWithData(String endpoint, String api_key)
+    {        
         this.endpoint = endpoint;
+        this.api_key = api_key;
     }
     
     @Override
@@ -35,9 +34,7 @@ public class TestThreadVectra implements Runnable
     private void testBot()
     {
         try {
-                    
-            
-            
+                                
             ClientService cs = new ClientService(endpoint);
             
             Map<String,String> map = new HashMap<>();
@@ -50,29 +47,27 @@ public class TestThreadVectra implements Runnable
             map.put("termindopobrania", "8");
             map.put("pesel", "43033104152");
             map.put("house", "70");
-            Session session = cs.createSession(API_KEY, "vectra","IVR","IVR",map);
+            Session session = cs.createSession(api_key, "vectra","TEST1","TEST",map);
             cs.getData(session.getSessionId()).getEntity(String.class); 
             Thread.sleep(1000);
-            cs.chat(session.getSessionId(), "start", API_KEY).getText();
+            cs.chat(session.getSessionId(), "start", api_key).getText();
             Thread.sleep(1000);
             
-            cs.chat(session.getSessionId(), "witam", API_KEY).getTopic();
+            cs.chat(session.getSessionId(), "witam", api_key).getTopic();
             
             
             Thread.sleep(2000);
-            cs.chat(session.getSessionId(), "tv", API_KEY).getTopic();
-            cs.chat(session.getSessionId(), "z kim rozmawiam", API_KEY).getTopic();
+            cs.chat(session.getSessionId(), "tv", api_key).getTopic();
+            cs.chat(session.getSessionId(), "z kim rozmawiam", api_key).getTopic();
             //SCENRIUSZ
-            cs.chat(session.getSessionId(), "chwila", API_KEY).getTopic();
+            cs.chat(session.getSessionId(), "chwila", api_key).getTopic();
             Thread.sleep(1000);
-            cs.chat(session.getSessionId(), "cześć", API_KEY).getTopic();
+            cs.chat(session.getSessionId(), "cześć", api_key).getTopic();
             Thread.sleep(1000);            
-            cs.chat(session.getSessionId(), "koniec", API_KEY).getTopic();
+            cs.chat(session.getSessionId(), "koniec", api_key).getTopic();
             Thread.sleep(2000);
-            cs.removeSession(session.getSessionId(),API_KEY, "vectra");
-            
-            
-            //System.out.println("sessionId=" + session.getSessionId() + " Thread: " + nuuOfT);
+            cs.removeSession(session.getSessionId(),api_key, "vectra");
+                                    
             
         } catch (Exception e) {
             e.printStackTrace();
