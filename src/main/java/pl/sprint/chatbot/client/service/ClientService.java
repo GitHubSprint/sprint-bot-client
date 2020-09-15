@@ -74,9 +74,9 @@ public class ClientService {
      * @return
      * @throws IOException 
      */
-    public Session createSession(String key, String botname, String channel, String username, Map<String,String> data) throws IOException
+    public Session createSession(String key, String botname, String channel, String username, Map<String,String> data, String wave) throws IOException
     {                
-        ChatBotData cbd = new ChatBotData(key,botname, channel, username);
+        ChatBotData cbd = new ChatBotData(key,botname, channel, username, wave);
         
         if(data != null && data.size() >0)
             cbd.setData(data);

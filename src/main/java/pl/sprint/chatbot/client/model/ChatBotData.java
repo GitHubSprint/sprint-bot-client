@@ -17,13 +17,15 @@ public class ChatBotData {
     private String botname;
     private String channel;
     private String username;
+    private String wave;
     private Map<String, String> data;   
 
-    public ChatBotData(String key, String botname, String channel, String username) {
+    public ChatBotData(String key, String botname, String channel, String username, String wave) {
         this.key = key;
         this.botname = botname;
         this.channel = channel;
         this.username = username;
+        this.wave = wave; 
     }
 
     public Map<String, String> getData() {
@@ -75,6 +77,14 @@ public class ChatBotData {
 
     public void setKey(String key) {
         this.key = key;
+    }
+
+    public String getWave() {
+        return wave;
+    }
+
+    public void setWave(String wave) {
+        this.wave = wave;
     }
     
     

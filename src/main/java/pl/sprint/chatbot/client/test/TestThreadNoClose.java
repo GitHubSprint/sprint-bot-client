@@ -47,7 +47,7 @@ public class TestThreadNoClose implements Runnable
             map.put("termindopobrania", "8");
             map.put("pesel", "43033104152");
             map.put("house", "70");
-            Session session = cs.createSession(api_key, "windykacja","VOICE","TEST",map);
+            Session session = cs.createSession(api_key, "windykacja","VOICE","TEST",map,"vcgdzplvmpp01-2020259124248-21");
             cs.getData(session.getSessionId()).getEntity(String.class); 
             Thread.sleep(1000);
             cs.chat(session.getSessionId(), "start Pan GODLEWSKI-ADAM 175 00 1 ", api_key).getText();
