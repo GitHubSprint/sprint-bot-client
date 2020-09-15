@@ -47,7 +47,7 @@ public class TestThreadBotWithData implements Runnable
             map.put("termindopobrania", "8");
             map.put("pesel", "43033104152");
             map.put("house", "70");
-            Session session = cs.createSession(api_key, "vectra","TEST1","TEST",map);
+            Session session = cs.createSession(api_key, "vectra","CHAT","TEST",map);
             cs.getData(session.getSessionId()).getEntity(String.class); 
             Thread.sleep(1000);
             cs.chat(session.getSessionId(), "start", api_key).getText();

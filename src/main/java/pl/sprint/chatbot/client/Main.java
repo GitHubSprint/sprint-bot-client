@@ -59,11 +59,11 @@ public class Main
             cnt = cs.countSessions("TEST").getCount();
             System.out.println("TEST cnt: " + cnt );
             
-            cnt = cs.countSessions("TEST1").getCount();
-            System.out.println("TEST1 cnt: " + cnt );
+            cnt = cs.countSessions("CHAT").getCount();
+            System.out.println("CHAT cnt: " + cnt );
             
-            cnt = cs.countSessions("TEST2").getCount();
-            System.out.println("TEST2 cnt: " + cnt );
+            cnt = cs.countSessions("VOICE").getCount();
+            System.out.println("VOICE cnt: " + cnt );
         }
         
     }
