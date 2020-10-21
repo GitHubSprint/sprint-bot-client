@@ -18,7 +18,17 @@ public class Session
     private String status;
     private String botname;    
     private long id;
+    private String wave; 
 
+    public String getWave() {
+        return wave;
+    }
+
+    public void setWave(String wave) {
+        this.wave = wave;
+    }
+
+    
     public long getId() {
         return id;
     }
