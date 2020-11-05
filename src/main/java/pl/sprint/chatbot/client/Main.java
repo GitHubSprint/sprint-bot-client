@@ -26,7 +26,7 @@ import pl.sprint.chatbot.client.test.TestThreadBotWithData;
  */
 public class Main
 {    
-    private final static String ENDPOINT =  "http://192.168.1.100/api";
+    private final static String ENDPOINT =  "http://192.168.254.159:8080/api";
     private final static String API_KEY = "Sprint";
     
     public static void main(String[] args) throws InterruptedException, IOException

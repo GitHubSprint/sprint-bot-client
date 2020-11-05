@@ -50,7 +50,7 @@ public class TestThreadBotWithData implements Runnable
             Session session = cs.createSession(api_key, "vectra","CHAT","TEST",map,"vcgdzplvmpp01-2020259124248-20");
             cs.getData(session.getSessionId()).getEntity(String.class); 
             Thread.sleep(1000);
-            cs.chat(session.getSessionId(), "start", api_key).getText();
+            cs.chat(session.getSessionId(), "START", api_key).getText();
             Thread.sleep(1000);
             
             cs.chat(session.getSessionId(), "witam", api_key).getTopic();

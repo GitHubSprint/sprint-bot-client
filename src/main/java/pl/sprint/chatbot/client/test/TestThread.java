@@ -53,7 +53,7 @@ public class TestThread implements Runnable
             Session session = cs.createSession(api_key, "windykacja","TEST","TEST",map,"vcgdzplvmpp01-2020259124248-18");
             cs.getData(session.getSessionId()).getEntity(String.class); 
             Thread.sleep(1000);
-            cs.chat(session.getSessionId(), "start Pan GODLEWSKI-ADAM 175 00 1 ", api_key).getText();
+            cs.chat(session.getSessionId(), "START PAN GODLEWSKI-ADAM 175 00 1 ", api_key).getText();
             Thread.sleep(1000);
             
             cs.chat(session.getSessionId(), "tak", api_key).getTopic();
