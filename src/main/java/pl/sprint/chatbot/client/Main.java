@@ -56,8 +56,8 @@ public class Main
             
             int cnt = cs.countSessions().getCount();
             System.out.println("cnt: " + cnt);
-            cnt = cs.countSessions("TEST").getCount();
-            System.out.println("TEST cnt: " + cnt );
+            //cnt = cs.countSessions("TEST").getCount();
+            //System.out.println("TEST cnt: " + cnt );
             
             cnt = cs.countSessions("CHAT").getCount();
             System.out.println("CHAT cnt: " + cnt );
