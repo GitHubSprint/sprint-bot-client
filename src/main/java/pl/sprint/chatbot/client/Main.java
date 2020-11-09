@@ -39,20 +39,22 @@ public class Main
             TestThread m1=new TestThread(ENDPOINT, API_KEY);  
             Thread t1 =new Thread(m1);  
             t1.start(); 
-            //Thread.sleep(1000);
+            
             
             
             
             TestThreadBotWithData m2=new TestThreadBotWithData(ENDPOINT, API_KEY);  
             Thread t2 =new Thread(m2);  
             t2.start(); 
-            //Thread.sleep(1000);
+            
                                     
             
             TestThreadNoClose m3=new TestThreadNoClose(ENDPOINT, API_KEY);  
             Thread t3 =new Thread(m3);  
             t3.start(); 
-            //Thread.sleep(1000);
+            
+            
+            Thread.sleep(1000);
             
             int cnt = cs.countSessions().getCount();
             System.out.println("cnt: " + cnt);
