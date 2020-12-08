@@ -5,6 +5,8 @@
  */
 package pl.sprint.chatbot.client.model;
 
+import org.codehaus.jackson.annotate.JsonProperty;
+
 
 /**
  *
@@ -20,8 +22,17 @@ public class ChatBot {
     private String prevText;
     private String prevPrevText;
 
-    private String topic;
+    private String topic;        
+    private int textDuration; 
 
+    public int getTextDuration() {
+        return textDuration;
+    }
+
+    public void setTextDuration(int textDuration) {
+        this.textDuration = textDuration;
+    }
+        
     public String getTopic() {
         return topic;
     }

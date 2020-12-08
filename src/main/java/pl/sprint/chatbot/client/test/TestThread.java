@@ -7,6 +7,7 @@ package pl.sprint.chatbot.client.test;
 
 import java.util.HashMap;
 import java.util.Map;
+import pl.sprint.chatbot.client.model.ChatBot;
 import pl.sprint.chatbot.client.service.ClientService;
 import pl.sprint.chatbot.client.model.Session;
 
@@ -53,21 +54,26 @@ public class TestThread implements Runnable
             Session session = cs.createSession(api_key, "windykacja","CHAT","TEST",map,null);
             cs.getData(session.getSessionId()).getEntity(String.class); 
             Thread.sleep(1000);
-            cs.chat(session.getSessionId(), "START PAN GODLEWSKI-ADAM 175 00 1 ", api_key).getText();
-            Thread.sleep(1000);
+            ChatBot cb = cs.chat(session.getSessionId(), "START PAN GODLEWSKI-ADAM 175 00 1 ", api_key, true);
             
-            cs.chat(session.getSessionId(), "tak", api_key).getTopic();
-            
+            System.out.println("TextDuration: "  + cb.getTextDuration());
             
             Thread.sleep(1000);
-            cs.chat(session.getSessionId(), "chwila", api_key).getTopic();
-            cs.chat(session.getSessionId(), "Siedlce Sokołowska 54 70", api_key).getTopic();
+            
+            cb = cs.chat(session.getSessionId(), "tak", api_key, true);
+            System.out.println("TextDuration: "  + cb.getTextDuration());
+            
+            Thread.sleep(1000);
+            cb = cs.chat(session.getSessionId(), "chwila", api_key, true);
+            System.out.println("TextDuration: "  + cb.getTextDuration());
+            cb = cs.chat(session.getSessionId(), "Siedlce Sokołowska 54 70", api_key);
+            System.out.println("TextDuration: "  + cb.getTextDuration());
             //SCENRIUSZ
-            cs.chat(session.getSessionId(), "SCENRIUSZ", api_key).getTopic();
+            cs.chat(session.getSessionId(), "SCENRIUSZ", api_key, true).getTopic();
             Thread.sleep(2000);
-            cs.chat(session.getSessionId(), "dzisiaj", api_key).getTopic();
+            cs.chat(session.getSessionId(), "dzisiaj", api_key, true).getTopic();
             Thread.sleep(3000);            
-            cs.chat(session.getSessionId(), "TERMINDOXDNI 09/07/2020", api_key).getTopic();
+            cs.chat(session.getSessionId(), "TERMINDOXDNI 09/07/2020", api_key, true).getTopic();
             Thread.sleep(1000);
             cs.removeSession(session.getSessionId(),api_key, "windykacja");                                    
             

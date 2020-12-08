@@ -71,6 +71,7 @@ public class ClientService {
      * @param channel name of channel like VOICE, CHAT etc.
      * @param username username e.g. phone number
      * @param data additional chat data
+     * @param wave IVR System Session ID
      * @return
      * @throws IOException 
      */
@@ -196,23 +197,28 @@ public class ClientService {
      * @param sessionId SessionId
      * @param chatQuery customer input
      * @param key Bot API KEY
+     * @param bargeIn is BargeIn
      * @return Bot Output
      * @throws UnsupportedEncodingException
      * @throws IOException 
      */
-    public ChatBot chat(String sessionId, String chatQuery, String key) throws UnsupportedEncodingException, IOException
+    public ChatBot chat(String sessionId, String chatQuery, String key, boolean bargeIn) throws UnsupportedEncodingException, IOException
     {
         WebResource webResource = client().resource(endpoint + "/chat");
         
         ClientResponse  response = webResource
                 .accept("application/json")
-                .type("application/json").post(ClientResponse.class, new ChatBotDTO(sessionId, chatQuery, key));
+                .type("application/json").post(ClientResponse.class, new ChatBotDTO(sessionId, chatQuery, key, bargeIn));
         
         checkStatusResponse(response.getStatus());
         
         return response.getEntity(ChatBot.class);
         
         
+    }
+    public ChatBot chat(String sessionId, String chatQuery, String key) throws UnsupportedEncodingException, IOException
+    {                
+        return this.chat(sessionId,chatQuery,key,false);                
     }
     
     /**

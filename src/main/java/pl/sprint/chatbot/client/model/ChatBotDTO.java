@@ -13,11 +13,21 @@ public class ChatBotDTO {
     private String sessionId;
     private String question;
     private String key;
+    private boolean bargeIn;
 
-    public ChatBotDTO(String sessionId, String question, String key) {
+    public ChatBotDTO(String sessionId, String question, String key, boolean bargeIn) {
         this.sessionId = sessionId;
         this.question = question;
         this.key = key;
+        this.bargeIn = bargeIn; 
+    }
+
+    public boolean isBargeIn() {
+        return bargeIn;
+    }
+
+    public void setBargeIn(boolean bargeIn) {
+        this.bargeIn = bargeIn;
     }
 
     
