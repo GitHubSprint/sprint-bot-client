@@ -41,8 +41,7 @@ public class Main
             t1.start(); 
             
             
-            
-            
+                      
             TestThreadBotWithData m2=new TestThreadBotWithData(ENDPOINT, API_KEY);  
             Thread t2 =new Thread(m2);  
             t2.start(); 
