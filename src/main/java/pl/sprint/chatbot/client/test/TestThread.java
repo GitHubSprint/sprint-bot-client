@@ -66,7 +66,7 @@ public class TestThread implements Runnable
             Thread.sleep(1000);
             cb = cs.chat(session.getSessionId(), "chwila", api_key, true);
             System.out.println("TextDuration: "  + cb.getTextDuration());
-            cb = cs.chat(session.getSessionId(), "Siedlce Sokołowska 54 70", api_key);
+            cb = cs.chat(session.getSessionId(), "Siedlce Sokołowska 54 70", api_key,true);
             System.out.println("TextDuration: "  + cb.getTextDuration());
             //SCENRIUSZ
             cs.chat(session.getSessionId(), "SCENRIUSZ", api_key, true).getTopic();

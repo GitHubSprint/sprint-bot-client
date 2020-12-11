@@ -50,23 +50,23 @@ public class TestThreadNoClose implements Runnable
             Session session = cs.createSession(api_key, "windykacja","VOICE","TEST",map,null);
             cs.getData(session.getSessionId()).getEntity(String.class); 
             Thread.sleep(1000);
-            cs.chat(session.getSessionId(), "START PAN GODLEWSKI-ADAM 175 00 1 ", api_key).getText();
+            cs.chat(session.getSessionId(), "START PAN GODLEWSKI-ADAM 175 00 1 ", api_key, true).getText();
             Thread.sleep(1000);
             
-            cs.chat(session.getSessionId(), "tak", api_key).getTopic();
+            cs.chat(session.getSessionId(), "tak", api_key, true).getTopic();
             
             
             Thread.sleep(1000);
-            cs.chat(session.getSessionId(), "chwila", api_key).getTopic();
+            cs.chat(session.getSessionId(), "chwila", api_key, true).getTopic();
             
             Thread.sleep(1000);
-            cs.chat(session.getSessionId(), "Siedlce Sokołowska 54 70", api_key).getTopic();
+            cs.chat(session.getSessionId(), "Siedlce Sokołowska 54 70", api_key, true).getTopic();
             //SCENRIUSZ
-            cs.chat(session.getSessionId(), "SCENRIUSZ", api_key).getTopic();
+            cs.chat(session.getSessionId(), "SCENRIUSZ", api_key, true).getTopic();
             Thread.sleep(1000);
-            cs.chat(session.getSessionId(), "dzisiaj", api_key).getTopic();
+            cs.chat(session.getSessionId(), "dzisiaj", api_key, true).getTopic();
             Thread.sleep(2000);            
-            cs.chat(session.getSessionId(), "TERMINDOXDNI 09/07/2020", api_key).getTopic();
+            cs.chat(session.getSessionId(), "TERMINDOXDNI 09/07/2020", api_key, true).getTopic();
             
             
         } catch (Exception e) {

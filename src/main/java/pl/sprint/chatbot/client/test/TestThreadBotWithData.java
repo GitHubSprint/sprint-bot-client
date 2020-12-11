@@ -50,21 +50,21 @@ public class TestThreadBotWithData implements Runnable
             Session session = cs.createSession(api_key, "vectra","CHAT","TEST",map,null);
             cs.getData(session.getSessionId()).getEntity(String.class); 
             Thread.sleep(1000);
-            cs.chat(session.getSessionId(), "START", api_key).getText();
+            cs.chat(session.getSessionId(), "START", api_key, true).getText();
             Thread.sleep(1000);
             
-            cs.chat(session.getSessionId(), "witam", api_key).getTopic();
+            cs.chat(session.getSessionId(), "witam", api_key, true).getTopic();
             
             
             Thread.sleep(2000);
-            cs.chat(session.getSessionId(), "tv", api_key).getTopic();
-            cs.chat(session.getSessionId(), "z kim rozmawiam", api_key).getTopic();
+            cs.chat(session.getSessionId(), "tv", api_key, true).getTopic();
+            cs.chat(session.getSessionId(), "z kim rozmawiam", api_key, true).getTopic();
             //SCENRIUSZ
-            cs.chat(session.getSessionId(), "chwila", api_key).getTopic();
+            cs.chat(session.getSessionId(), "chwila", api_key, true).getTopic();
             Thread.sleep(1000);
-            cs.chat(session.getSessionId(), "cześć", api_key).getTopic();
+            cs.chat(session.getSessionId(), "cześć", api_key, true).getTopic();
             Thread.sleep(1000);            
-            cs.chat(session.getSessionId(), "koniec", api_key).getTopic();
+            cs.chat(session.getSessionId(), "koniec", api_key, true).getTopic();
             Thread.sleep(2000);
             cs.removeSession(session.getSessionId(),api_key, "vectra");
                                     

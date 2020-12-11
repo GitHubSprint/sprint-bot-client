@@ -26,14 +26,14 @@ import pl.sprint.chatbot.client.test.TestThreadBotWithData;
  */
 public class Main
 {    
-    private final static String ENDPOINT =  "http://localhost:8080/api";
+    private final static String ENDPOINT =  "http://192.168.254.159:8080/api";
     private final static String API_KEY = "Sprint";
     
     public static void main(String[] args) throws InterruptedException, IOException
     {
         ClientService cs = new ClientService(ENDPOINT);
                                         
-        for(int i=0; i < 100; i++)
+        for(int i=0; i < 200; i++)
         {     
             
             TestThread m1=new TestThread(ENDPOINT, API_KEY);  
