@@ -63,6 +63,8 @@ public class ClientService {
     public void setEndpoint(String endpoint) {
         this.endpoint = endpoint;
     }
+    
+    
 
     /**
      * Create session
