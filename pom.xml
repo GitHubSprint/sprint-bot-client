@@ -51,7 +51,7 @@
                 <manifest>
                     <addClasspath>true</addClasspath>
                     <classpathPrefix>lib/</classpathPrefix>
-                    <mainClass>pl.sprint.chatbot.client.Main</mainClass>
+                    <mainClass>${mainClass}</mainClass>
                 </manifest>
             </archive>            
         </configuration>
