@@ -18,7 +18,7 @@ import pl.sprint.chatbot.client.model.Session;
 public class TestThread implements Runnable
 {
     private String api_key = "Sprint";
-    private String endpoint =  "http://192.168.254.191/api";
+    private String endpoint =  "https://192.168.254.191:8443/api";
 
     public TestThread(String endpoint, String api_key)
     {        
