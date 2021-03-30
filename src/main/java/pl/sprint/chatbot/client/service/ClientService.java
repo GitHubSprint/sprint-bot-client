@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
+import pl.sprint.chatbot.client.model.SessionUpdate;
 
 /**
  * SprintBot client service class.
@@ -145,13 +146,13 @@ public class ClientService {
      * @param data new data
      * @return 
      */
-    public Session updateData(String sessionId, Map<String,String> data)
+    public Session updateData(String sessionId, SessionUpdate update)
     {
         WebResource webResource = client().resource(endpoint + "/session/" + sessionId);
                         
         ClientResponse  response = webResource
                 .accept("application/json")
-                .type("application/json").put(ClientResponse.class,data); 
+                .type("application/json").put(ClientResponse.class,update); 
         
         checkStatusResponse(response.getStatus());
         
