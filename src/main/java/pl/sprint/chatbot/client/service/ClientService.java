@@ -143,16 +143,31 @@ public class ClientService {
     /**
      * Update bot data
      * @param sessionId SessionId
+     * @param update
      * @param data new data
      * @return 
      */
-    public Session updateData(String sessionId, SessionUpdate update)
+    public Session updateSession(String sessionId, SessionUpdate update)
     {
         WebResource webResource = client().resource(endpoint + "/session/" + sessionId);
                         
         ClientResponse  response = webResource
                 .accept("application/json")
                 .type("application/json").put(ClientResponse.class,update); 
+        
+        checkStatusResponse(response.getStatus());
+        
+        return response.getEntity(Session.class);
+    }
+    
+    
+    public Session updateData(String sessionId, Map<String,String> data)
+    {
+        WebResource webResource = client().resource(endpoint + "/session/" + sessionId);
+                        
+        ClientResponse  response = webResource
+                .accept("application/json")
+                .type("application/json").post(ClientResponse.class,data); 
         
         checkStatusResponse(response.getStatus());
         
