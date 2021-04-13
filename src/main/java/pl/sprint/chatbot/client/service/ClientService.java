@@ -175,6 +175,25 @@ public class ClientService {
     }
     
     /**
+     * 
+     * @param sessionId
+     * @param data
+     * @return 
+     */    
+    public Session updateDataBot20(String sessionId, Map<String,String> data)
+    {
+        WebResource webResource = client().resource(endpoint + "/session/" + sessionId);
+                        
+        ClientResponse  response = webResource
+                .accept("application/json")
+                .type("application/json").put(ClientResponse.class,data); 
+        
+        checkStatusResponse(response.getStatus());
+        
+        return response.getEntity(Session.class);
+    }
+    
+    /**
      * Retrieve count of active sessions.
      * @param channel name of channel
      * @return
