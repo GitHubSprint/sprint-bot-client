@@ -54,8 +54,7 @@
                     <mainClass>${mainClass}</mainClass>
                 </manifest>
             </archive>            
-        </configuration>
-        
+        </configuration>        
     </plugin>
     <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
