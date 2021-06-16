@@ -23,7 +23,9 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
+import pl.sprint.chatbot.client.model.EmailData;
 import pl.sprint.chatbot.client.model.SessionUpdate;
+import pl.sprint.chatbot.client.model.SimpleModel;
 
 /**
  * SprintBot client service class.
@@ -32,7 +34,7 @@ import pl.sprint.chatbot.client.model.SessionUpdate;
 public class ClientService {
     
     private int timeout = 15000;
-    private String endpoint;// = "http://192.168.253.64/api";    
+    private String endpoint;   
 
     /**
      * COnstructor 
@@ -116,6 +118,21 @@ public class ClientService {
         checkStatusResponse(response.getStatus());
         
         return response.getEntity(Session.class);
+    }
+    
+    public SimpleModel sendMail(String to, String from, String subject, String text, boolean isHtmlContent, String key)
+    {        
+              
+        WebResource webResource = client().resource(endpoint + "/sendmail");
+        
+        ClientResponse  response = webResource
+                .accept("application/json")
+                .type("application/json").post(ClientResponse.class, 
+                        new EmailData(to, from, subject, text, isHtmlContent, key));
+        
+        checkStatusResponse(response.getStatus());
+        
+        return response.getEntity(SimpleModel.class);
     }
     
     
