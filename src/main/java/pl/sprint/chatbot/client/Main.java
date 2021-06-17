@@ -8,7 +8,6 @@ package pl.sprint.chatbot.client;
 import pl.sprint.chatbot.client.service.ClientService;
 import java.io.IOException;
 import java.io.StringWriter;
-import pl.sprint.chatbot.client.test.TestThread;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
@@ -18,8 +17,6 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-import pl.sprint.chatbot.client.test.TestThreadNoClose;
-import pl.sprint.chatbot.client.test.TestThreadBotWithData;
 
 /**
  * Main Class for SprintBot stress tests.

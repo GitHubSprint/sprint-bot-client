@@ -134,21 +134,7 @@ public class ClientService {
         
         return response.getEntity(SimpleModel.class);
     }
-    
-    public SimpleModel sendMailQueue(String to, String from, String subject, String text, boolean isHtmlContent, String key, String session)
-    {        
-              
-        WebResource webResource = client().resource(endpoint + "/sendmail/" + session);
-        
-        ClientResponse  response = webResource
-                .accept("application/json")
-                .type("application/json").post(ClientResponse.class, 
-                        new EmailData(to, from, subject, text, isHtmlContent, key));
-        
-        checkStatusResponse(response.getStatus());
-        
-        return response.getEntity(SimpleModel.class);
-    }
+
     
     
     /**
