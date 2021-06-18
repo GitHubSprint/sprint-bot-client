@@ -129,10 +129,12 @@ public class ClientService {
         return response.getEntity(Session.class);
     }
     
-    public SimpleModel sendMail(String to, String from, String subject, String text, boolean isHtmlContent, String key)
+    
+    public SimpleModel addMessageToSend(String to, String from, String subject, String text, boolean isHtmlContent, String key, String session)
     {        
               
-        WebResource webResource = client().resource(endpoint + "/sendmail");
+        WebResource webResource = client().resource(endpoint + "/addmessage/" + session);
+        
         
         ClientResponse  response = webResource
                 .accept("application/json")
