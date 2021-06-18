@@ -147,10 +147,10 @@ public class ClientService {
         return response.getEntity(SimpleModel.class);
     }
     
-    public SimpleModel addMessageToSend(String session)
+    public SimpleModel addMessageToSendTest(String session)
     {        
               
-        WebResource webResource = client().resource(endpoint + "/addmessage/" + session);
+        WebResource webResource = client().resource(endpoint + "/addmessagetest/" + session);
                 
         
         ClientResponse  response = webResource
