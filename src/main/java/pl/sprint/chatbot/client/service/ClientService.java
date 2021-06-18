@@ -135,11 +135,27 @@ public class ClientService {
               
         WebResource webResource = client().resource(endpoint + "/addmessage/" + session);
         
+        System.out.println(endpoint + "/addmessage/" + session);
         
         ClientResponse  response = webResource
                 .accept("application/json")
                 .type("application/json").post(ClientResponse.class, 
                         new EmailData(to, from, subject, text, isHtmlContent, key));
+        
+        checkStatusResponse(response.getStatus());
+        
+        return response.getEntity(SimpleModel.class);
+    }
+    
+    public SimpleModel addMessageToSend(String session)
+    {        
+              
+        WebResource webResource = client().resource(endpoint + "/addmessage/" + session);
+                
+        
+        ClientResponse  response = webResource
+                .accept("application/json")
+                .type("application/json").get(ClientResponse.class);
         
         checkStatusResponse(response.getStatus());
         
