@@ -13,17 +13,17 @@ import pl.sprint.chatbot.client.model.CountSessions;
 import pl.sprint.chatbot.client.model.Session;
 import pl.sprint.chatbot.client.model.TTSRequest;
 import pl.sprint.chatbot.client.model.TTSResponse;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientHandlerException;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.UniformInterfaceException;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.config.DefaultClientConfig;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
+import java.util.HashMap;
 import java.util.Map;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -31,7 +31,7 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
+import org.codehaus.jackson.map.ObjectMapper;
 import pl.sprint.chatbot.client.model.EmailData;
 import pl.sprint.chatbot.client.model.SessionUpdate;
 import pl.sprint.chatbot.client.model.SimpleModel;
@@ -76,7 +76,31 @@ public class ClientService {
         this.endpoint = endpoint;
     }
     
-    
+    private HttpURLConnection connection(String endpoint, String method, Object inputObject) throws MalformedURLException, IOException
+    {
+        URL url=new URL(endpoint);
+        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+        con.setRequestMethod(method);
+        con.setRequestProperty("Content-Type", "application/json; utf-8");
+        con.setRequestProperty("Accept", "application/json");
+        con.setDoOutput(true);
+        con.setConnectTimeout(timeout);
+        con.setReadTimeout(timeout);
+        
+        if(inputObject != null)
+        {
+            ObjectMapper objectMapper = new ObjectMapper(); 
+            String json = objectMapper.writeValueAsString(inputObject);
+
+            try(OutputStream os = con.getOutputStream()) {
+                byte[] input = json.getBytes("utf-8");
+                os.write(input, 0, input.length);			
+            }             
+        }
+                       
+        
+        return con;
+    }
 
     /**
      * Create session
@@ -89,22 +113,21 @@ public class ClientService {
      * @return
      * @throws IOException 
      */
-    public Session createSession(String key, String botname, String channel, String username, Map<String,String> data, String wave) throws IOException
+    public Session createSession(String key, String botname, String channel, String username, Map<String,String> data, String wave) throws IOException, Exception
     {                
         ChatBotData cbd = new ChatBotData(key,botname, channel, username, wave);
         
         if(data != null && data.size() >0)
             cbd.setData(data);
+                        
+        HttpURLConnection connection = connection(endpoint + "/session", "POST", cbd);
+        InputStream responseStream = connection.getInputStream();
+        ObjectMapper mapper = new ObjectMapper();
+        Session session = mapper.readValue(responseStream, Session.class);
         
-        WebResource webResource = client().resource(endpoint + "/session");
- 
-        ClientResponse  response = webResource
-                .accept("application/json")
-                .type("application/json").post(ClientResponse.class, cbd);         
+        connection.disconnect();
         
-        checkStatusResponse(response.getStatus());
-            
-        return response.getEntity(Session.class);
+        return session;
     }
     
     /**
@@ -115,74 +138,45 @@ public class ClientService {
      * @return
      * @throws IOException 
      */
-    public Session removeSession(String sessionId, String key, String botname) throws IOException
-    {        
-              
-        WebResource webResource = client().resource(endpoint + "/session/" + sessionId);
-        
-        ClientResponse  response = webResource
-                .accept("application/json")
-                .type("application/json").delete(ClientResponse.class, new ChatBotData(key,botname));
-        
-        checkStatusResponse(response.getStatus());
-        
-        return response.getEntity(Session.class);
-    }
-    
-    
-    public SimpleModel addMessageToSend(String to, String from, String subject, String text, boolean isHtmlContent, String key, String session)
-    {        
-              
-        WebResource webResource = client().resource(endpoint + "/addmessage/" + session);
-        
-        System.out.println(endpoint + "/addmessage/" + session);
-        
-        ClientResponse  response = webResource
-                .accept("application/json")
-                .type("application/json").post(ClientResponse.class, 
-                        new EmailData(to, from, subject, text, isHtmlContent, key));
-        
-        checkStatusResponse(response.getStatus());
-        
-        return response.getEntity(SimpleModel.class);
-    }
-    
-    public SimpleModel addMessageToSendTest(String session)
-    {        
-              
-        WebResource webResource = client().resource(endpoint + "/addmessagetest/" + session);
-                
-        
-        ClientResponse  response = webResource
-                .accept("application/json")
-                .type("application/json").get(ClientResponse.class);
-        
-        checkStatusResponse(response.getStatus());
-        
-        return response.getEntity(SimpleModel.class);
-    }
+    public Session removeSession(String sessionId, String key, String botname) throws IOException, Exception
+    {
 
+        HttpURLConnection connection = connection(endpoint + "/session/" + sessionId, "DELETE", new ChatBotData(key,botname));
+        InputStream responseStream = connection.getInputStream();
+        ObjectMapper mapper = new ObjectMapper();
+        Session session = mapper.readValue(responseStream, Session.class);        
+        connection.disconnect();        
+        return session; 
+              
+    }
     
     
+    public SimpleModel addMessageToSend(String to, String from, String subject, String text, boolean isHtmlContent, String key, String session) throws IOException, Exception
+    {
+
+        HttpURLConnection connection = connection(endpoint + "/addmessage/" + session, "POST", new EmailData(to, from, subject, text, isHtmlContent, key));
+        InputStream responseStream = connection.getInputStream();
+        ObjectMapper mapper = new ObjectMapper();
+        SimpleModel simpleModel = mapper.readValue(responseStream, SimpleModel.class);        
+        connection.disconnect();        
+        return simpleModel;                       
+    }
+        
+
     /**
      * Retrieve bot data
      * @param sessionId SessionId
      * @return
-     * @throws RuntimeException
-     * @throws UniformInterfaceException
-     * @throws ClientHandlerException 
      */
-    public ClientResponse getData(String sessionId) throws RuntimeException, UniformInterfaceException, ClientHandlerException
+    public Map<String,String> getData(String sessionId) throws IOException, Exception
     {
-        WebResource webResource = client().resource(endpoint + "/session/" + sessionId);
-        
-        ClientResponse  response = webResource
-                .accept("application/json")
-                .type("application/json").get(ClientResponse.class); 
-        
-        checkStatusResponse(response.getStatus());
-        
-        return response;
+        Map<String, String> map = new HashMap<>();
+        HttpURLConnection connection = connection(endpoint + "/session/" + sessionId, "GET", null);
+        InputStream responseStream = connection.getInputStream();        
+        ObjectMapper mapper = new ObjectMapper();                        
+        Map<String,String> result = new ObjectMapper().readValue(responseStream, HashMap.class);                      
+        connection.disconnect();    
+        return result;
     }
     
     /**
@@ -192,31 +186,28 @@ public class ClientService {
      * @param data new data
      * @return 
      */
-    public Session updateSession(String sessionId, SessionUpdate update)
+    public Session updateSession(String sessionId, SessionUpdate update) throws IOException, Exception
     {
-        WebResource webResource = client().resource(endpoint + "/session/" + sessionId);
-                        
-        ClientResponse  response = webResource
-                .accept("application/json")
-                .type("application/json").put(ClientResponse.class,update); 
         
-        checkStatusResponse(response.getStatus());
+        HttpURLConnection connection = connection(endpoint + "/session/" + sessionId, "PUT", update);
+        InputStream responseStream = connection.getInputStream();
+        ObjectMapper mapper = new ObjectMapper();
+        Session session = mapper.readValue(responseStream, Session.class);        
+        connection.disconnect();        
+        return session; 
         
-        return response.getEntity(Session.class);
     }
     
     
-    public Session updateData(String sessionId, Map<String,String> data)
+    public Session updateData(String sessionId, Map<String,String> data) throws IOException, Exception
     {
-        WebResource webResource = client().resource(endpoint + "/session/" + sessionId);
-                        
-        ClientResponse  response = webResource
-                .accept("application/json")
-                .type("application/json").post(ClientResponse.class,data); 
         
-        checkStatusResponse(response.getStatus());
-        
-        return response.getEntity(Session.class);
+        HttpURLConnection connection = connection(endpoint + "/session/" + sessionId, "POST", data);
+        InputStream responseStream = connection.getInputStream();
+        ObjectMapper mapper = new ObjectMapper();
+        Session session = mapper.readValue(responseStream, Session.class);        
+        connection.disconnect();        
+        return session;                                 
     }
     
     /**
@@ -225,17 +216,15 @@ public class ClientService {
      * @param data
      * @return 
      */    
-    public Session updateDataBot20(String sessionId, Map<String,String> data)
+    public Session updateDataBot20(String sessionId, Map<String,String> data) throws IOException, Exception
     {
-        WebResource webResource = client().resource(endpoint + "/session/" + sessionId);
-                        
-        ClientResponse  response = webResource
-                .accept("application/json")
-                .type("application/json").put(ClientResponse.class,data); 
         
-        checkStatusResponse(response.getStatus());
-        
-        return response.getEntity(Session.class);
+        HttpURLConnection connection = connection(endpoint + "/session/" + sessionId, "PUT", data);
+        InputStream responseStream = connection.getInputStream();
+        ObjectMapper mapper = new ObjectMapper();
+        Session session = mapper.readValue(responseStream, Session.class);        
+        connection.disconnect();        
+        return session;                  
     }
     
     /**
@@ -245,33 +234,25 @@ public class ClientService {
      * @throws IOException 
      */
     public CountSessions countSessions(String channel) throws IOException
-    {        
-        WebResource webResource = client().resource(endpoint + "/session/count?channel=" + channel);
-                
- 
-        ClientResponse  response = webResource
-                .accept("application/json")
-                .type("application/json").get(ClientResponse.class);         
+    { 
         
-        checkStatusResponse(response.getStatus());
-        
-        
-        return response.getEntity(CountSessions.class);
+        HttpURLConnection connection = connection(endpoint + "/session/count?channel=" + channel, "GET", null);
+        InputStream responseStream = connection.getInputStream(); 
+        ObjectMapper mapper = new ObjectMapper();
+        CountSessions result = mapper.readValue(responseStream, CountSessions.class);                      
+        connection.disconnect();           
+        return result;                
     }
     
     public CountSessions countSessions() throws IOException
-    {        
-        WebResource webResource = client().resource(endpoint + "/session/count/");
-                
- 
-        ClientResponse  response = webResource
-                .accept("application/json")
-                .type("application/json").get(ClientResponse.class);         
-        
-        checkStatusResponse(response.getStatus());
-        
-        
-        return response.getEntity(CountSessions.class);
+    {
+
+        HttpURLConnection connection = connection(endpoint + "/session/count/", "GET", null);
+        InputStream responseStream = connection.getInputStream(); 
+        ObjectMapper mapper = new ObjectMapper();
+        CountSessions result = mapper.readValue(responseStream, CountSessions.class);                      
+        connection.disconnect();           
+        return result;                
     }
     
     /**
@@ -286,17 +267,13 @@ public class ClientService {
      */
     public ChatBot chat(String sessionId, String chatQuery, String key, boolean bargeIn) throws UnsupportedEncodingException, IOException
     {
-        WebResource webResource = client().resource(endpoint + "/chat");
         
-        ClientResponse  response = webResource
-                .accept("application/json")
-                .type("application/json").post(ClientResponse.class, new ChatBotDTO(sessionId, chatQuery, key, bargeIn));
-        
-        checkStatusResponse(response.getStatus());
-        
-        return response.getEntity(ChatBot.class);
-        
-        
+        HttpURLConnection connection = connection(endpoint + "/chat", "POST", new ChatBotDTO(sessionId, chatQuery, key, bargeIn));
+        InputStream responseStream = connection.getInputStream();
+        ObjectMapper mapper = new ObjectMapper();
+        ChatBot response = mapper.readValue(responseStream, ChatBot.class);        
+        connection.disconnect();        
+        return response;              
     }
     public ChatBot chat(String sessionId, String chatQuery, String key) throws UnsupportedEncodingException, IOException
     {                
@@ -308,32 +285,19 @@ public class ClientService {
      * @param req query name
      * @return 
      */
-    public TTSResponse tts(TTSRequest req)
+    public TTSResponse tts(TTSRequest req) throws IOException, Exception
     {
-        WebResource webResource = client().resource(endpoint + "/tts");
-        ClientResponse  response = webResource
-                .accept("application/json")
-                .type("application/json").post(ClientResponse.class, req);   
-        checkStatusResponse(response.getStatus());
         
-        return response.getEntity(TTSResponse.class);
+        HttpURLConnection connection = connection(endpoint + "/tts", "POST", req);
+        InputStream responseStream = connection.getInputStream();
+        ObjectMapper mapper = new ObjectMapper();
+        TTSResponse response = mapper.readValue(responseStream, TTSResponse.class);        
+        connection.disconnect();        
+        return response;                                 
     }
     
     
-    private void checkStatusResponse(int status)
-    {
-        if (status != 200) {
-            throw new RuntimeException("Failed : HTTP error code : "
-                    + status);
-        } 
-    }
     
-    private Client client()
-    {
-        DefaultClientConfig defaultClientConfig = new DefaultClientConfig();
-        defaultClientConfig.getClasses().add(JacksonJsonProvider.class);     
-        return Client.create(defaultClientConfig);
-    }
     
     /**
      * Reoves SSL veryfication

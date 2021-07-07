@@ -29,7 +29,7 @@ public class TestThread implements Runnable
     @Override
     public void run() {
         
-        for(int i=0;i<10;i++)
+        for(int i=0;i<1;i++)
             testBot(); 
             
     }
@@ -52,11 +52,18 @@ public class TestThread implements Runnable
             map.put("pesel", "43033104152");
             map.put("house", "70");
             Session session = cs.createSession(api_key, "windykacja","CHAT","TEST",map,null);
-            cs.getData(session.getSessionId()).getEntity(String.class); 
+            
+            
+            Map<String,String> respMap = cs.getData(session.getSessionId()); 
+            
+            respMap.forEach((key, value) -> System.out.println(key + ":" + value));
+            
             Thread.sleep(1000);
             ChatBot cb = cs.chat(session.getSessionId(), "START PAN GODLEWSKI-ADAM 175 00 1 ", api_key, true);
             
             System.out.println("TextDuration: "  + cb.getTextDuration());
+            System.out.println("countSessions: "  + cs.countSessions().getCount());
+            
             
             Thread.sleep(1000);
             
@@ -69,13 +76,16 @@ public class TestThread implements Runnable
             cb = cs.chat(session.getSessionId(), "Siedlce Sokołowska 54 70", api_key,true);
             System.out.println("TextDuration: "  + cb.getTextDuration());
             //SCENRIUSZ
-            cs.chat(session.getSessionId(), "SCENRIUSZ", api_key, true).getTopic();
-            Thread.sleep(2000);
+            String topic = cs.chat(session.getSessionId(), "SCENRIUSZ", api_key, true).getTopic();
+            System.out.println("topic = " + topic);
+            Thread.sleep(1000);
             cs.chat(session.getSessionId(), "dzisiaj", api_key, true).getTopic();
-            Thread.sleep(3000);            
+            Thread.sleep(1000);            
             cs.chat(session.getSessionId(), "TERMINDOXDNI 09/07/2020", api_key, true).getTopic();
             Thread.sleep(1000);
-            cs.removeSession(session.getSessionId(),api_key, "windykacja");                                    
+            session =  cs.removeSession(session.getSessionId(),api_key, "windykacja");  
+            
+            System.out.println("removeSession session = " + session.getSessionId());
             
         } catch (Exception e) {
             e.printStackTrace();

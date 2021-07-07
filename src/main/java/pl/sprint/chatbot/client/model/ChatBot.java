@@ -5,7 +5,7 @@
  */
 package pl.sprint.chatbot.client.model;
 
-import org.codehaus.jackson.annotate.JsonProperty;
+
 
 
 /**
