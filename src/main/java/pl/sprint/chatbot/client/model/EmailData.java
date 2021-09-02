@@ -5,6 +5,8 @@
  */
 package pl.sprint.chatbot.client.model;
 
+import java.util.List;
+
 /**
  * Email Model
  * @author Sławomir Kostrzewa
@@ -16,17 +18,38 @@ public class EmailData {
     private String text;
     private boolean isHtmlContent;
     private String key;
-
+    private List<String> attachments; 
+    
     public EmailData() {
     }
 
-    public EmailData(String to, String from, String subject, String text, boolean isHtmlContent, String key) {
+//    public EmailData(String to, String from, String subject, String text, boolean isHtmlContent, String key) {
+//        this.to = to;
+//        this.from = from;
+//        this.subject = subject;
+//        this.text = text;
+//        this.isHtmlContent = isHtmlContent;
+//        this.key = key;
+//    }
+
+    public EmailData(String to, String from, String subject, String text, boolean isHtmlContent, String key, List<String> attachments) {
         this.to = to;
         this.from = from;
         this.subject = subject;
         this.text = text;
         this.isHtmlContent = isHtmlContent;
         this.key = key;
+        this.attachments = attachments;
+    }
+    
+    
+
+    public List<String> getAttachments() {
+        return attachments;
+    }
+
+    public void setAttachments(List<String> attachments) {
+        this.attachments = attachments;
     }
 
     

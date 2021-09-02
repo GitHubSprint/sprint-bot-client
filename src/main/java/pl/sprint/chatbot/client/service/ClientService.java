@@ -24,6 +24,7 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -151,10 +152,10 @@ public class ClientService {
     }
     
     
-    public SimpleModel addMessageToSend(String to, String from, String subject, String text, boolean isHtmlContent, String key, String session) throws IOException, Exception
+    public SimpleModel addMessageToSend(String to, String from, String subject, String text, List<String> attachments, boolean isHtmlContent, String key, String session) throws IOException, Exception
     {
 
-        HttpURLConnection connection = connection(endpoint + "/addmessage/" + session, "POST", new EmailData(to, from, subject, text, isHtmlContent, key));
+        HttpURLConnection connection = connection(endpoint + "/addmessage/" + session, "POST", new EmailData(to, from, subject, text, isHtmlContent, key, attachments));
         InputStream responseStream = connection.getInputStream();
         ObjectMapper mapper = new ObjectMapper();
         SimpleModel simpleModel = mapper.readValue(responseStream, SimpleModel.class);        
