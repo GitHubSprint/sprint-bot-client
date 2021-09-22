@@ -11,8 +11,6 @@ import pl.sprint.chatbot.client.model.ChatBotDTO;
 import pl.sprint.chatbot.client.model.ChatBot;
 import pl.sprint.chatbot.client.model.CountSessions;
 import pl.sprint.chatbot.client.model.Session;
-import pl.sprint.chatbot.client.model.TTSRequest;
-import pl.sprint.chatbot.client.model.TTSResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -280,23 +278,6 @@ public class ClientService {
     {                
         return this.chat(sessionId,chatQuery,key,false);                
     }
-    
-    /**
-     * Retrieves TTS
-     * @param req query name
-     * @return 
-     */
-    public TTSResponse tts(TTSRequest req) throws IOException, Exception
-    {
-        
-        HttpURLConnection connection = connection(endpoint + "/tts", "POST", req);
-        InputStream responseStream = connection.getInputStream();
-        ObjectMapper mapper = new ObjectMapper();
-        TTSResponse response = mapper.readValue(responseStream, TTSResponse.class);        
-        connection.disconnect();        
-        return response;                                 
-    }
-    
     
     
     
