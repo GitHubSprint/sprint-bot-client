@@ -173,7 +173,7 @@ public class ClientService {
         HttpURLConnection connection = connection(endpoint + "/session/" + sessionId, "GET", null);
         InputStream responseStream = connection.getInputStream();        
         ObjectMapper mapper = new ObjectMapper();                        
-        Map<String,String> result = new ObjectMapper().readValue(responseStream, HashMap.class);                      
+        Map<String,String> result = mapper.readValue(responseStream, HashMap.class);                      
         connection.disconnect();    
         return result;
     }
