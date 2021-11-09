@@ -120,12 +120,12 @@ public class ClientService {
             cbd.setData(data);
                         
         HttpURLConnection connection = connection(endpoint + "/session", "POST", cbd);
-        InputStream responseStream = connection.getInputStream();
-        ObjectMapper mapper = new ObjectMapper();
-        Session session = mapper.readValue(responseStream, Session.class);
-        
-        connection.disconnect();
-        
+        Session session;
+        try (InputStream responseStream = connection.getInputStream()) {
+            ObjectMapper mapper = new ObjectMapper();
+            session = mapper.readValue(responseStream, Session.class);
+            connection.disconnect();
+        }
         return session;
     }
     
@@ -141,10 +141,12 @@ public class ClientService {
     {
 
         HttpURLConnection connection = connection(endpoint + "/session/" + sessionId, "DELETE", new ChatBotData(key,botname));
-        InputStream responseStream = connection.getInputStream();
-        ObjectMapper mapper = new ObjectMapper();
-        Session session = mapper.readValue(responseStream, Session.class);        
-        connection.disconnect();        
+        Session session;
+        try (InputStream responseStream = connection.getInputStream()) {
+            ObjectMapper mapper = new ObjectMapper();
+            session = mapper.readValue(responseStream, Session.class);
+            connection.disconnect();
+        }
         return session; 
               
     }
@@ -154,10 +156,12 @@ public class ClientService {
     {
 
         HttpURLConnection connection = connection(endpoint + "/addmessage/" + session, "POST", new EmailData(to, from, subject, text, isHtmlContent, key, attachments));
-        InputStream responseStream = connection.getInputStream();
-        ObjectMapper mapper = new ObjectMapper();
-        SimpleModel simpleModel = mapper.readValue(responseStream, SimpleModel.class);        
-        connection.disconnect();        
+        SimpleModel simpleModel;
+        try (InputStream responseStream = connection.getInputStream()) {
+            ObjectMapper mapper = new ObjectMapper();
+            simpleModel = mapper.readValue(responseStream, SimpleModel.class);
+            connection.disconnect();
+        }
         return simpleModel;                       
     }
         
@@ -171,10 +175,12 @@ public class ClientService {
     {
         Map<String, String> map = new HashMap<>();
         HttpURLConnection connection = connection(endpoint + "/session/" + sessionId, "GET", null);
-        InputStream responseStream = connection.getInputStream();        
-        ObjectMapper mapper = new ObjectMapper();                        
-        Map<String,String> result = mapper.readValue(responseStream, HashMap.class);                      
-        connection.disconnect();    
+        Map<String,String> result;
+        try (InputStream responseStream = connection.getInputStream()) {
+            ObjectMapper mapper = new ObjectMapper();
+            result = mapper.readValue(responseStream, HashMap.class);
+            connection.disconnect();
+        }
         return result;
     }
     
@@ -189,10 +195,12 @@ public class ClientService {
     {
         
         HttpURLConnection connection = connection(endpoint + "/session/" + sessionId, "PUT", update);
-        InputStream responseStream = connection.getInputStream();
-        ObjectMapper mapper = new ObjectMapper();
-        Session session = mapper.readValue(responseStream, Session.class);        
-        connection.disconnect();        
+        Session session;
+        try (InputStream responseStream = connection.getInputStream()) {
+            ObjectMapper mapper = new ObjectMapper();
+            session = mapper.readValue(responseStream, Session.class);
+            connection.disconnect();
+        }
         return session; 
         
     }
@@ -202,10 +210,12 @@ public class ClientService {
     {
         
         HttpURLConnection connection = connection(endpoint + "/session/" + sessionId, "POST", data);
-        InputStream responseStream = connection.getInputStream();
-        ObjectMapper mapper = new ObjectMapper();
-        Session session = mapper.readValue(responseStream, Session.class);        
-        connection.disconnect();        
+        Session session;
+        try (InputStream responseStream = connection.getInputStream()) {
+            ObjectMapper mapper = new ObjectMapper();
+            session = mapper.readValue(responseStream, Session.class);
+            connection.disconnect();
+        }
         return session;                                 
     }
     
@@ -219,10 +229,12 @@ public class ClientService {
     {
         
         HttpURLConnection connection = connection(endpoint + "/session/" + sessionId, "PUT", data);
-        InputStream responseStream = connection.getInputStream();
-        ObjectMapper mapper = new ObjectMapper();
-        Session session = mapper.readValue(responseStream, Session.class);        
-        connection.disconnect();        
+        Session session;
+        try (InputStream responseStream = connection.getInputStream()) {
+            ObjectMapper mapper = new ObjectMapper();
+            session = mapper.readValue(responseStream, Session.class);
+            connection.disconnect();
+        }
         return session;                  
     }
     
@@ -236,10 +248,12 @@ public class ClientService {
     { 
         
         HttpURLConnection connection = connection(endpoint + "/session/count?channel=" + channel, "GET", null);
-        InputStream responseStream = connection.getInputStream(); 
-        ObjectMapper mapper = new ObjectMapper();
-        CountSessions result = mapper.readValue(responseStream, CountSessions.class);                      
-        connection.disconnect();           
+        CountSessions result;
+        try (InputStream responseStream = connection.getInputStream()) {
+            ObjectMapper mapper = new ObjectMapper();
+            result = mapper.readValue(responseStream, CountSessions.class);
+            connection.disconnect();
+        }
         return result;                
     }
     
@@ -247,10 +261,12 @@ public class ClientService {
     {
 
         HttpURLConnection connection = connection(endpoint + "/session/count/", "GET", null);
-        InputStream responseStream = connection.getInputStream(); 
-        ObjectMapper mapper = new ObjectMapper();
-        CountSessions result = mapper.readValue(responseStream, CountSessions.class);                      
-        connection.disconnect();           
+        CountSessions result;
+        try (InputStream responseStream = connection.getInputStream()) {
+            ObjectMapper mapper = new ObjectMapper();
+            result = mapper.readValue(responseStream, CountSessions.class);
+            connection.disconnect();
+        }
         return result;                
     }
     
@@ -268,10 +284,12 @@ public class ClientService {
     {
         
         HttpURLConnection connection = connection(endpoint + "/chat", "POST", new ChatBotDTO(sessionId, chatQuery, key, bargeIn));
-        InputStream responseStream = connection.getInputStream();
-        ObjectMapper mapper = new ObjectMapper();
-        ChatBot response = mapper.readValue(responseStream, ChatBot.class);        
-        connection.disconnect();        
+        ChatBot response;
+        try (InputStream responseStream = connection.getInputStream()) {
+            ObjectMapper mapper = new ObjectMapper();
+            response = mapper.readValue(responseStream, ChatBot.class);
+            connection.disconnect();
+        }
         return response;              
     }
     public ChatBot chat(String sessionId, String chatQuery, String key) throws UnsupportedEncodingException, IOException
