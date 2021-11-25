@@ -205,7 +205,14 @@ public class ClientService {
         
     }
     
-    
+    /**
+     * Update session extData
+     * @param sessionId
+     * @param data extension data
+     * @return
+     * @throws IOException
+     * @throws Exception 
+     */
     public Session updateData(String sessionId, Map<String,String> data) throws IOException, Exception
     {
         
@@ -220,11 +227,14 @@ public class ClientService {
     }
     
     /**
-     * 
+     * Set BotData 
+     * @deprecated
+     * This method delete all extData and add new, please use <p> Use {@link ClientService#updateData(java.lang.String, java.util.Map)} instead.
      * @param sessionId
-     * @param data
+     * @param data extension data
      * @return 
      */    
+    @Deprecated
     public Session updateDataBot20(String sessionId, Map<String,String> data) throws IOException, Exception
     {
         
