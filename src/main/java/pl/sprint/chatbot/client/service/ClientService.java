@@ -6,6 +6,7 @@
 package pl.sprint.chatbot.client.service;
 
 
+import java.io.EOFException;
 import pl.sprint.chatbot.client.model.ChatBotData;
 import pl.sprint.chatbot.client.model.ChatBotDTO;
 import pl.sprint.chatbot.client.model.ChatBot;
@@ -171,15 +172,21 @@ public class ClientService {
      * @param sessionId SessionId
      * @return
      */
-    public Map<String,String> getData(String sessionId) throws IOException, Exception
+    public Map<String,String> getSessionData(String sessionId) throws IOException, Exception
     {
-        Map<String, String> map = new HashMap<>();
         HttpURLConnection connection = connection(endpoint + "/session/" + sessionId, "GET", null);
-        Map<String,String> result;
+        Map<String,String> result = new HashMap<>();
         try (InputStream responseStream = connection.getInputStream()) {
-            ObjectMapper mapper = new ObjectMapper();
-            result = mapper.readValue(responseStream, HashMap.class);
+            if(responseStream != null)
+            {
+                ObjectMapper mapper = new ObjectMapper();
+                result = mapper.readValue(responseStream, HashMap.class);
+            }
             connection.disconnect();
+        }
+        catch(EOFException ex)
+        {
+            result = new HashMap<>();
         }
         return result;
     }

@@ -18,7 +18,7 @@ import pl.sprint.chatbot.client.model.Session;
 public class TestThread implements Runnable
 {
     private String api_key = "Sprint";
-    private String endpoint =  "https://192.168.254.191:8443/api";
+    private String endpoint =  "https://localhost:8443/api";
 
     public TestThread(String endpoint, String api_key)
     {        
@@ -29,7 +29,7 @@ public class TestThread implements Runnable
     @Override
     public void run() {
         
-        for(int i=0;i<1;i++)
+        for(int i=0;i<10;i++)
             testBot(); 
             
     }
@@ -54,7 +54,7 @@ public class TestThread implements Runnable
             Session session = cs.createSession(api_key, "windykacja","CHAT","TEST",map,null);
             
             
-            Map<String,String> respMap = cs.getData(session.getSessionId()); 
+            Map<String,String> respMap = cs.getSessionData(session.getSessionId()); 
             
             respMap.forEach((key, value) -> System.out.println(key + ":" + value));
             
