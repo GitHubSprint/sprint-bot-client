@@ -125,7 +125,7 @@ public class ClientService {
         try (InputStream responseStream = connection.getInputStream()) {
             ObjectMapper mapper = new ObjectMapper();
             session = mapper.readValue(responseStream, Session.class);
-            connection.disconnect();
+            
         }
         return session;
     }
@@ -146,7 +146,7 @@ public class ClientService {
         try (InputStream responseStream = connection.getInputStream()) {
             ObjectMapper mapper = new ObjectMapper();
             session = mapper.readValue(responseStream, Session.class);
-            connection.disconnect();
+            
         }
         return session; 
               
@@ -161,14 +161,14 @@ public class ClientService {
         try (InputStream responseStream = connection.getInputStream()) {
             ObjectMapper mapper = new ObjectMapper();
             simpleModel = mapper.readValue(responseStream, SimpleModel.class);
-            connection.disconnect();
+            
         }
         return simpleModel;                       
     }
         
 
     /**
-     * Retrieve bot data
+     * Retrieve bot data from session
      * @param sessionId SessionId
      * @return
      */
@@ -182,7 +182,32 @@ public class ClientService {
                 ObjectMapper mapper = new ObjectMapper();
                 result = mapper.readValue(responseStream, HashMap.class);
             }
-            connection.disconnect();
+            
+        }
+        catch(EOFException ex)
+        {
+            result = new HashMap<>();
+        }
+        return result;
+    }
+    
+    
+    /**
+     * Retrieve bot data from DB
+     * @param sessionId SessionId
+     * @return
+     */
+    public Map<String,String> getSessionDbData(String sessionId) throws IOException, Exception
+    {
+        HttpURLConnection connection = connection(endpoint + "/session/db/" + sessionId, "GET", null);
+        Map<String,String> result = new HashMap<>();
+        try (InputStream responseStream = connection.getInputStream()) {
+            if(responseStream != null)
+            {
+                ObjectMapper mapper = new ObjectMapper();
+                result = mapper.readValue(responseStream, HashMap.class);
+            }
+            
         }
         catch(EOFException ex)
         {
@@ -206,7 +231,7 @@ public class ClientService {
         try (InputStream responseStream = connection.getInputStream()) {
             ObjectMapper mapper = new ObjectMapper();
             session = mapper.readValue(responseStream, Session.class);
-            connection.disconnect();
+            
         }
         return session; 
         
@@ -228,7 +253,7 @@ public class ClientService {
         try (InputStream responseStream = connection.getInputStream()) {
             ObjectMapper mapper = new ObjectMapper();
             session = mapper.readValue(responseStream, Session.class);
-            connection.disconnect();
+            
         }
         return session;                                 
     }
@@ -250,7 +275,7 @@ public class ClientService {
         try (InputStream responseStream = connection.getInputStream()) {
             ObjectMapper mapper = new ObjectMapper();
             session = mapper.readValue(responseStream, Session.class);
-            connection.disconnect();
+            
         }
         return session;                  
     }
@@ -269,7 +294,7 @@ public class ClientService {
         try (InputStream responseStream = connection.getInputStream()) {
             ObjectMapper mapper = new ObjectMapper();
             result = mapper.readValue(responseStream, CountSessions.class);
-            connection.disconnect();
+            
         }
         return result;                
     }
@@ -282,7 +307,7 @@ public class ClientService {
         try (InputStream responseStream = connection.getInputStream()) {
             ObjectMapper mapper = new ObjectMapper();
             result = mapper.readValue(responseStream, CountSessions.class);
-            connection.disconnect();
+            
         }
         return result;                
     }
@@ -304,8 +329,7 @@ public class ClientService {
         ChatBot response;
         try (InputStream responseStream = connection.getInputStream()) {
             ObjectMapper mapper = new ObjectMapper();
-            response = mapper.readValue(responseStream, ChatBot.class);
-            connection.disconnect();
+            response = mapper.readValue(responseStream, ChatBot.class);            
         }
         return response;              
     }
