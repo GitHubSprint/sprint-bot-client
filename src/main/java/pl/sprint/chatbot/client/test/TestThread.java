@@ -83,6 +83,18 @@ public class TestThread implements Runnable
             Thread.sleep(1000);            
             cs.chat(session.getSessionId(), "TERMINDOXDNI 09/07/2020", api_key, true).getTopic();
             Thread.sleep(1000);
+            
+            for(int i=0;i<300;i++)
+            {
+                map.put(String.valueOf(i), String.valueOf(i));
+                cs.updateData(session.getSessionId(), map);
+                
+                Map<String, String> ret = cs.getSessionData(session.getSessionId());
+                
+                System.out.println("DATA:\n" + ret);
+            }
+            
+            
             session =  cs.removeSession(session.getSessionId(),api_key, "windykacja");  
             
             System.out.println("removeSession session = " + session.getSessionId());

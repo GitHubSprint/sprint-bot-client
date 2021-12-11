@@ -26,9 +26,13 @@ public class Main
         
         ClientService cs = new ClientService(ENDPOINT);
         
-        TestThread m1=new TestThread(ENDPOINT, API_KEY);  
-        Thread t1 =new Thread(m1);  
-        t1.start(); 
+        for(int i=0; i < 23; i++)
+        {
+            TestThread m1=new TestThread(ENDPOINT, API_KEY);  
+            Thread t1 =new Thread(m1);  
+            t1.start(); 
+        }
+        
         
         
         //cs.addMessageToSend("skoslaw@gmail.com","noreply@sprintbot.ai", "test tematu", "jakaś treść", false, API_KEY, "1231241");
