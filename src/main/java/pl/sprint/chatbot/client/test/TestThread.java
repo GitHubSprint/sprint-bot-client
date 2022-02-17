@@ -27,11 +27,8 @@ public class TestThread implements Runnable
     }
     
     @Override
-    public void run() {
-        
-        for(int i=0;i<10;i++)
-            testBot(); 
-            
+    public void run() {                
+            testBot();             
     }
     
     private void testBot()
@@ -59,7 +56,7 @@ public class TestThread implements Runnable
             respMap.forEach((key, value) -> System.out.println(key + ":" + value));
             
             Thread.sleep(1000);
-            ChatBot cb = cs.chat(session.getSessionId(), "START PAN GODLEWSKI-ADAM 175 00 1 ", api_key, true);
+            ChatBot cb = cs.chat(session.getSessionId(), "STARTV PAN GODLEWSKI-ADAM 175 00 1 21-01-2022", api_key, true);
             
             System.out.println("TextDuration: "  + cb.getTextDuration());
             System.out.println("countSessions: "  + cs.countSessions().getCount());
@@ -84,7 +81,7 @@ public class TestThread implements Runnable
             cs.chat(session.getSessionId(), "TERMINDOXDNI 09/07/2020", api_key, true).getTopic();
             Thread.sleep(1000);
             
-            for(int i=0;i<300;i++)
+            for(int i=0;i<5;i++)
             {
                 map.put(String.valueOf(i), String.valueOf(i));
                 cs.updateData(session.getSessionId(), map);

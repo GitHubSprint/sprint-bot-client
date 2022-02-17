@@ -26,7 +26,7 @@ public class Main
         
         ClientService cs = new ClientService(ENDPOINT);
         
-        for(int i=0; i < 23; i++)
+        for(int i=0; i < 5; i++)
         {
             TestThread m1=new TestThread(ENDPOINT, API_KEY);  
             Thread t1 =new Thread(m1);  
