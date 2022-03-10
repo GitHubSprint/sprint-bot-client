@@ -46,12 +46,17 @@ public class ClientService {
     private String endpoint;   
 
     /**
-     * COnstructor 
+     * Constructor 
      * @param endpoint Bot Endpoint 
      */
     public ClientService(String endpoint) 
     {                 
         this.endpoint = endpoint;        
+    }
+    public ClientService(String endpoint, int timeout) 
+    {                 
+        this.endpoint = endpoint;   
+        this.timeout = timeout;
     }
 
     /**
