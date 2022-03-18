@@ -1,7 +1,7 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright © 2022 Sprint S.A.
+ * Contact: slawomir.kostrzewa@sprint.pl
+
  */
 package pl.sprint.chatbot.client.service;
 
@@ -32,6 +32,7 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
 import pl.sprint.chatbot.client.model.EmailData;
 import pl.sprint.chatbot.client.model.SessionUpdate;
 import pl.sprint.chatbot.client.model.SimpleModel;
@@ -81,10 +82,10 @@ public class ClientService {
         this.endpoint = endpoint;
     }
     
-    private HttpURLConnection connection(String endpoint, String method, Object inputObject) throws MalformedURLException, IOException
+    private HttpsURLConnection connection(String endpoint, String method, Object inputObject) throws MalformedURLException, IOException
     {
         URL url=new URL(endpoint);
-        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+        HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
         con.setRequestMethod(method);
         con.setRequestProperty("Content-Type", "application/json; utf-8");
         con.setRequestProperty("Accept", "application/json");
@@ -122,7 +123,7 @@ public class ClientService {
     {                
         ChatBotData cbd = new ChatBotData(key,botname, channel, username, wave);
         
-        if(data != null && data.size() >0)
+        if(data != null && !data.isEmpty())
             cbd.setData(data);
                         
         HttpURLConnection connection = connection(endpoint + "/session", "POST", cbd);
@@ -132,6 +133,7 @@ public class ClientService {
             session = mapper.readValue(responseStream, Session.class);
             
         }
+                        
         return session;
     }
     
@@ -184,8 +186,11 @@ public class ClientService {
         try (InputStream responseStream = connection.getInputStream()) {
             if(responseStream != null)
             {
-                ObjectMapper mapper = new ObjectMapper();
-                result = mapper.readValue(responseStream, HashMap.class);
+                ObjectMapper mapper = new ObjectMapper();                
+                
+                TypeReference<HashMap<String, String>> typeRef = new TypeReference<HashMap<String, String>>() {};
+                result = mapper.readValue(responseStream, typeRef);
+                
             }
             
         }
@@ -209,8 +214,9 @@ public class ClientService {
         try (InputStream responseStream = connection.getInputStream()) {
             if(responseStream != null)
             {
-                ObjectMapper mapper = new ObjectMapper();
-                result = mapper.readValue(responseStream, HashMap.class);
+                ObjectMapper mapper = new ObjectMapper();                                
+                TypeReference<HashMap<String, String>> typeRef = new TypeReference<HashMap<String, String>>() {};
+                result = mapper.readValue(responseStream, typeRef);                
             }
             
         }

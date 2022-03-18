@@ -1,3 +1,9 @@
+/*
+ * Copyright © 2022 Sprint S.A.
+ * Contact: slawomir.kostrzewa@sprint.pl
+
+ */
+
 package pl.sprint.chatbot.client.model;
 
 /**

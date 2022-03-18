@@ -11,6 +11,8 @@ import java.util.Map;
  *
  * @author skost
  */
+
+
 public class ChatBotData {
     
     private String key;

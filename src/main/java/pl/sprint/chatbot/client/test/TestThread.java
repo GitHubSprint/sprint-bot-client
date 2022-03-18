@@ -1,7 +1,7 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright © 2022 Sprint S.A.
+ * Contact: slawomir.kostrzewa@sprint.pl
+
  */
 package pl.sprint.chatbot.client.test;
 
@@ -53,7 +53,7 @@ public class TestThread implements Runnable
             
             Map<String,String> respMap = cs.getSessionData(session.getSessionId()); 
             
-            respMap.forEach((key, value) -> System.out.println(key + ":" + value));
+            respMap.forEach((key, value) -> System.out.println("respMap: " + key + ":" + value));
             
             Thread.sleep(1000);
             ChatBot cb = cs.chat(session.getSessionId(), "STARTV PAN GODLEWSKI-ADAM 175 00 1 21-01-2022", api_key, true);
@@ -88,7 +88,7 @@ public class TestThread implements Runnable
                 
                 Map<String, String> ret = cs.getSessionData(session.getSessionId());
                 
-                System.out.println("DATA:\n" + ret);
+                System.out.println("RESP MAP DATA:\n" + ret);
             }
             
             
