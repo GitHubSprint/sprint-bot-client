@@ -18,7 +18,7 @@ public class ChatBot {
     private String prevQuestion;
     private String currentQuestion;
     private String prevText;
-    private String prevPrevText;
+    //private String prevPrevText;
 
     private String topic;        
     private int textDuration; 
@@ -62,13 +62,13 @@ public class ChatBot {
         this.prevText = prevText;
     }
 
-    public String getPrevPrevText() {
-        return prevPrevText;
-    }
-
-    public void setPrevPrevText(String prevPrevText) {
-        this.prevPrevText = prevPrevText;
-    }
+//    public String getPrevPrevText() {
+//        return prevPrevText;
+//    }
+//
+//    public void setPrevPrevText(String prevPrevText) {
+//        this.prevPrevText = prevPrevText;
+//    }
     
     
 
