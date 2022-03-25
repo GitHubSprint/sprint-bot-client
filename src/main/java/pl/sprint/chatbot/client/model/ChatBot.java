@@ -6,6 +6,8 @@
 
 package pl.sprint.chatbot.client.model;
 
+import java.util.List;
+
 /**
  *
  * @author skost
@@ -19,9 +21,20 @@ public class ChatBot {
     private String currentQuestion;
     private String prevText;
     //private String prevPrevText;
+    
+    private List<String> answers; 
 
     private String topic;        
     private int textDuration; 
+
+    public List<String> getAnswers() {
+        return answers;
+    }
+
+    public void setAnswers(List<String> answers) {
+        this.answers = answers;
+    }
+            
 
     public int getTextDuration() {
         return textDuration;
