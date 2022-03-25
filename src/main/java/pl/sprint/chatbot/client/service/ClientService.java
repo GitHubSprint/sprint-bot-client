@@ -178,6 +178,7 @@ public class ClientService {
      * Retrieve bot data from session
      * @param sessionId SessionId
      * @return
+     * @throws java.io.IOException
      */
     public Map<String,String> getSessionData(String sessionId) throws IOException, Exception
     {
@@ -206,6 +207,7 @@ public class ClientService {
      * Retrieve bot data from DB
      * @param sessionId SessionId
      * @return
+     * @throws java.io.IOException
      */
     public Map<String,String> getSessionDbData(String sessionId) throws IOException, Exception
     {
@@ -231,8 +233,8 @@ public class ClientService {
      * Update bot data
      * @param sessionId SessionId
      * @param update
-     * @param data new data
      * @return 
+     * @throws java.io.IOException 
      */
     public Session updateSession(String sessionId, SessionUpdate update) throws IOException, Exception
     {
@@ -271,6 +273,7 @@ public class ClientService {
     
     /**
      * Set BotData 
+     * @throws java.io.IOException
      * @deprecated
      * This method delete all extData and add new, please use <p> Use {@link ClientService#updateData(java.lang.String, java.util.Map)} instead.
      * @param sessionId

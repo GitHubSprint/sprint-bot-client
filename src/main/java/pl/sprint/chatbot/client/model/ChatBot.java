@@ -7,11 +7,13 @@
 package pl.sprint.chatbot.client.model;
 
 import java.util.List;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 /**
  *
  * @author skost
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ChatBot {
     private String sessionId;
     private String status;
@@ -20,7 +22,7 @@ public class ChatBot {
     private String prevQuestion;
     private String currentQuestion;
     private String prevText;
-    //private String prevPrevText;
+    
     
     private List<String> answers; 
 
@@ -74,16 +76,6 @@ public class ChatBot {
     public void setPrevText(String prevText) {
         this.prevText = prevText;
     }
-
-//    public String getPrevPrevText() {
-//        return prevPrevText;
-//    }
-//
-//    public void setPrevPrevText(String prevPrevText) {
-//        this.prevPrevText = prevPrevText;
-//    }
-    
-    
 
     public String getSessionId() {
         return sessionId;
