@@ -8,7 +8,7 @@ package pl.sprint.chatbot.client.test;
 import java.util.HashMap;
 import java.util.Map;
 import pl.sprint.chatbot.client.model.ChatBot;
-import pl.sprint.chatbot.client.service.ClientService;
+import pl.sprint.chatbot.client.service.SprintBotClient;
 import pl.sprint.chatbot.client.model.Session;
 
 /**
@@ -36,7 +36,7 @@ public class TestThread implements Runnable
         try {
                     
                         
-            ClientService cs = new ClientService(endpoint);
+            SprintBotClient cs = new SprintBotClient(endpoint);
             
             Map<String,String> map = new HashMap<>();
             map.put("city", "Siedlce");
@@ -48,7 +48,7 @@ public class TestThread implements Runnable
             map.put("termindopobrania", "8");
             map.put("pesel", "43033104152");
             map.put("house", "70");
-            Session session = cs.createSession(api_key, "windykacja","CHAT","TEST",map,null);
+            Session session = cs.openSession(api_key, "windykacja","CHAT","TEST",map,null);
             
             
             Map<String,String> respMap = cs.getSessionData(session.getSessionId()); 
@@ -92,7 +92,7 @@ public class TestThread implements Runnable
             }
             
             
-            session =  cs.removeSession(session.getSessionId(),api_key, "windykacja");  
+            session =  cs.closeSession(session.getSessionId(),api_key, "windykacja");  
             
             System.out.println("removeSession session = " + session.getSessionId());
             

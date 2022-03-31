@@ -7,7 +7,7 @@ package pl.sprint.chatbot.client.test;
 
 import java.util.HashMap;
 import java.util.Map;
-import pl.sprint.chatbot.client.service.ClientService;
+import pl.sprint.chatbot.client.service.SprintBotClient;
 import pl.sprint.chatbot.client.model.Session;
 
 /**
@@ -35,7 +35,7 @@ public class TestThreadBotWithData implements Runnable
     {
         try {
                                 
-            ClientService cs = new ClientService(endpoint);
+            SprintBotClient cs = new SprintBotClient(endpoint);
             
             Map<String,String> map = new HashMap<>();
             map.put("city", "Siedlce");
@@ -47,7 +47,7 @@ public class TestThreadBotWithData implements Runnable
             map.put("termindopobrania", "8");
             map.put("pesel", "43033104152");
             map.put("house", "70");
-            Session session = cs.createSession(api_key, "vectra","CHAT","TEST",map,null);
+            Session session = cs.openSession(api_key, "vectra","CHAT","TEST",map,null);
             //cs.getData(session.getSessionId()).getEntity(String.class); 
             Thread.sleep(1000);
             cs.chat(session.getSessionId(), "START", api_key, true).getText();
@@ -66,7 +66,7 @@ public class TestThreadBotWithData implements Runnable
             Thread.sleep(1000);            
             cs.chat(session.getSessionId(), "koniec", api_key, true).getTopic();
             Thread.sleep(2000);
-            cs.removeSession(session.getSessionId(),api_key, "vectra");
+            cs.closeSession(session.getSessionId(),api_key, "vectra");
                                     
             
         } catch (Exception e) {

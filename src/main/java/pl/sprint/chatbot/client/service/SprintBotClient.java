@@ -41,7 +41,7 @@ import pl.sprint.chatbot.client.model.SimpleModel;
  * SprintBot client service class.
  * @author skost
  */
-public class ClientService {
+public class SprintBotClient {
     
     private int timeout = 15000;
     private String endpoint;   
@@ -50,11 +50,11 @@ public class ClientService {
      * Constructor 
      * @param endpoint Bot Endpoint 
      */
-    public ClientService(String endpoint) 
+    public SprintBotClient(String endpoint) 
     {                 
         this.endpoint = endpoint;        
     }
-    public ClientService(String endpoint, int timeout) 
+    public SprintBotClient(String endpoint, int timeout) 
     {                 
         this.endpoint = endpoint;   
         this.timeout = timeout;
@@ -119,7 +119,7 @@ public class ClientService {
      * @return
      * @throws IOException 
      */
-    public Session createSession(String key, String botname, String channel, String username, Map<String,String> data, String wave) throws IOException, Exception
+    public Session openSession(String key, String botname, String channel, String username, Map<String,String> data, String wave) throws IOException, Exception
     {                
         ChatBotData cbd = new ChatBotData(key,botname, channel, username, wave);
         
@@ -145,7 +145,7 @@ public class ClientService {
      * @return
      * @throws IOException 
      */
-    public Session removeSession(String sessionId, String key, String botname) throws IOException, Exception
+    public Session closeSession(String sessionId, String key, String botname) throws IOException, Exception
     {
 
         HttpURLConnection connection = connection(endpoint + "/session/" + sessionId, "DELETE", new ChatBotData(key,botname));
