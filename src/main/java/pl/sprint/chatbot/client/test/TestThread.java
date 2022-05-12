@@ -5,11 +5,15 @@
  */
 package pl.sprint.chatbot.client.test;
 
+import java.io.StringWriter;
+import java.security.cert.X509Certificate;
 import java.util.HashMap;
 import java.util.Map;
 import pl.sprint.chatbot.client.model.ChatBot;
 import pl.sprint.chatbot.client.service.SprintBotClient;
 import pl.sprint.chatbot.client.model.Session;
+
+import javax.net.ssl.*;
 
 /**
  * Standard chat test.
@@ -34,8 +38,11 @@ public class TestThread implements Runnable
     private void testBot()
     {
         try {
-                    
-                        
+
+            trustAllCertyficates();
+
+            System.out.println(endpoint);
+
             SprintBotClient cs = new SprintBotClient(endpoint);
             
             Map<String,String> map = new HashMap<>();
@@ -98,6 +105,40 @@ public class TestThread implements Runnable
             
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+
+
+    public static void trustAllCertyficates()
+    {
+        try {
+            ////////////////////////////////////////////////////////////////////////////////
+            TrustManager[] trustAllCerts = new TrustManager[]
+                    {
+                            new X509TrustManager()
+                            {
+                                public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                                    return null;
+                                }
+                                public void checkClientTrusted(X509Certificate[] certs, String authType) {}
+                                public void checkServerTrusted(X509Certificate[] certs, String authType) {}
+                            }
+                    };
+            SSLContext sc = SSLContext.getInstance("SSL");
+            sc.init(null, trustAllCerts, new java.security.SecureRandom());
+            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+
+            HostnameVerifier allHostsValid = new HostnameVerifier() {
+                public boolean verify(String hostname, SSLSession session) {
+                    return true;
+                }
+            };
+            HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
+            /////////////////////////////////////////////////////////////////////////////////
+        } catch (Exception ex) {
+            StringWriter sw = new StringWriter();
+            ex.printStackTrace();
         }
     }
 }
