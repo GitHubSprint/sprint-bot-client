@@ -83,6 +83,18 @@ public class Session
     public void setCreated(boolean created) {
         this.created = created;
     }
-    
-    
+
+    @Override
+    public String toString()
+    {
+        return "Session{" +
+                "sessionId='" + sessionId + '\'' +
+                ", created=" + created +
+                ", sessionCreated='" + sessionCreated + '\'' +
+                ", status='" + status + '\'' +
+                ", botname='" + botname + '\'' +
+                ", id=" + id +
+                ", wave='" + wave + '\'' +
+                '}';
+    }
 }

@@ -6,36 +6,26 @@
 package pl.sprint.chatbot.client.service;
 
 
-import java.io.EOFException;
-import pl.sprint.chatbot.client.model.ChatBotData;
-import pl.sprint.chatbot.client.model.ChatBotDTO;
-import pl.sprint.chatbot.client.model.ChatBot;
-import pl.sprint.chatbot.client.model.CountSessions;
-import pl.sprint.chatbot.client.model.Session;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
+import pl.sprint.chatbot.client.BadRequestException;
+import pl.sprint.chatbot.client.model.*;
+
+import javax.net.ssl.*;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
-import pl.sprint.chatbot.client.model.EmailData;
-import pl.sprint.chatbot.client.model.SessionUpdate;
-import pl.sprint.chatbot.client.model.SimpleModel;
+import java.util.stream.Collectors;
 
 /**
  * SprintBot client service class.
@@ -119,7 +109,7 @@ public class SprintBotClient {
      * @return
      * @throws IOException 
      */
-    public Session openSession(String key, String botname, String channel, String username, Map<String,String> data, String wave) throws IOException, Exception
+    public Session openSession(String key, String botname, String channel, String username, Map<String,String> data, String wave) throws BadRequestException, Exception
     {                
         ChatBotData cbd = new ChatBotData(key,botname, channel, username, wave);
         
@@ -127,14 +117,51 @@ public class SprintBotClient {
             cbd.setData(data);
                         
         HttpURLConnection connection = connection(endpoint + "/session", "POST", cbd);
-        Session session;
-        try (InputStream responseStream = connection.getInputStream()) {
-            ObjectMapper mapper = new ObjectMapper();
-            session = mapper.readValue(responseStream, Session.class);
-            
+        Session session = null;
+
+        if(checkStatusResponse(connection) == 200)
+        {
+            try (InputStream responseStream = connection.getInputStream())
+            {
+                ObjectMapper mapper = new ObjectMapper();
+                session = mapper.readValue(responseStream, Session.class);
+
+            }
         }
-                        
+
         return session;
+    }
+
+
+    private int checkStatusResponse(HttpURLConnection connection) throws BadRequestException, IOException, RuntimeException, JSONException
+    {
+
+        int code = connection.getResponseCode();
+        if(code == 200)
+            return code;
+        else if (code == 400) {
+            try (InputStream responseStream = connection.getErrorStream())
+            {
+                String json = new BufferedReader(
+                        new InputStreamReader(responseStream, StandardCharsets.UTF_8))
+                        .lines()
+                        .collect(Collectors.joining("\n"));
+                JSONObject obj = new JSONObject(json);
+                String status = obj.getString("status");
+
+                if(obj.has("text"))
+                {
+                    status += " " + obj.getString("text");
+                }
+                throw new BadRequestException(status);
+            }
+
+        }
+        else
+        {
+            throw new RuntimeException("Failed : HTTP error code : "
+                    + code);
+        }
     }
     
     /**
@@ -149,11 +176,15 @@ public class SprintBotClient {
     {
 
         HttpURLConnection connection = connection(endpoint + "/session/" + sessionId, "DELETE", new ChatBotData(key,botname));
-        Session session;
-        try (InputStream responseStream = connection.getInputStream()) {
-            ObjectMapper mapper = new ObjectMapper();
-            session = mapper.readValue(responseStream, Session.class);
-            
+        Session session = null;
+        if(checkStatusResponse(connection) == 200)
+        {
+            try (InputStream responseStream = connection.getInputStream())
+            {
+                ObjectMapper mapper = new ObjectMapper();
+                session = mapper.readValue(responseStream, Session.class);
+
+            }
         }
         return session; 
               
@@ -164,11 +195,15 @@ public class SprintBotClient {
     {
 
         HttpURLConnection connection = connection(endpoint + "/addmessage/" + session, "POST", new EmailData(to, from, subject, text, isHtmlContent, key, attachments));
-        SimpleModel simpleModel;
-        try (InputStream responseStream = connection.getInputStream()) {
-            ObjectMapper mapper = new ObjectMapper();
-            simpleModel = mapper.readValue(responseStream, SimpleModel.class);
-            
+        SimpleModel simpleModel = null;
+        if(checkStatusResponse(connection) == 200)
+        {
+            try (InputStream responseStream = connection.getInputStream())
+            {
+                ObjectMapper mapper = new ObjectMapper();
+                simpleModel = mapper.readValue(responseStream, SimpleModel.class);
+
+            }
         }
         return simpleModel;                       
     }
@@ -236,15 +271,20 @@ public class SprintBotClient {
      * @return 
      * @throws java.io.IOException 
      */
-    public Session updateSession(String sessionId, SessionUpdate update) throws IOException, Exception
+    public Session updateSession(String sessionId, SessionUpdate update) throws Exception
     {
         
         HttpURLConnection connection = connection(endpoint + "/session/" + sessionId, "PUT", update);
-        Session session;
-        try (InputStream responseStream = connection.getInputStream()) {
-            ObjectMapper mapper = new ObjectMapper();
-            session = mapper.readValue(responseStream, Session.class);
-            
+        Session session = null;
+
+        if(checkStatusResponse(connection) == 200)
+        {
+            try (InputStream responseStream = connection.getInputStream())
+            {
+                ObjectMapper mapper = new ObjectMapper();
+                session = mapper.readValue(responseStream, Session.class);
+
+            }
         }
         return session; 
         
@@ -262,11 +302,16 @@ public class SprintBotClient {
     {
         
         HttpURLConnection connection = connection(endpoint + "/session/" + sessionId, "POST", data);
-        Session session;
-        try (InputStream responseStream = connection.getInputStream()) {
-            ObjectMapper mapper = new ObjectMapper();
-            session = mapper.readValue(responseStream, Session.class);
-            
+        Session session = null;
+
+        if(checkStatusResponse(connection) == 200)
+        {
+            try (InputStream responseStream = connection.getInputStream())
+            {
+                ObjectMapper mapper = new ObjectMapper();
+                session = mapper.readValue(responseStream, Session.class);
+
+            }
         }
         return session;                                 
     }
@@ -336,18 +381,22 @@ public class SprintBotClient {
      * @throws UnsupportedEncodingException
      * @throws IOException 
      */
-    public ChatBot chat(String sessionId, String chatQuery, String key, boolean bargeIn) throws UnsupportedEncodingException, IOException
+    public ChatBot chat(String sessionId, String chatQuery, String key, boolean bargeIn) throws IOException, BadRequestException, JSONException
     {
         
         HttpURLConnection connection = connection(endpoint + "/chat", "POST", new ChatBotDTO(sessionId, chatQuery, key, bargeIn));
-        ChatBot response;
-        try (InputStream responseStream = connection.getInputStream()) {
-            ObjectMapper mapper = new ObjectMapper();
-            response = mapper.readValue(responseStream, ChatBot.class);            
+        ChatBot response = null;
+        if(checkStatusResponse(connection) == 200)
+        {
+            try (InputStream responseStream = connection.getInputStream())
+            {
+                ObjectMapper mapper = new ObjectMapper();
+                response = mapper.readValue(responseStream, ChatBot.class);
+            }
         }
         return response;              
     }
-    public ChatBot chat(String sessionId, String chatQuery, String key) throws UnsupportedEncodingException, IOException
+    public ChatBot chat(String sessionId, String chatQuery, String key) throws  IOException, BadRequestException, JSONException
     {                
         return this.chat(sessionId,chatQuery,key,false);                
     }

@@ -9,6 +9,8 @@ import java.io.StringWriter;
 import java.security.cert.X509Certificate;
 import java.util.HashMap;
 import java.util.Map;
+
+import pl.sprint.chatbot.client.BadRequestException;
 import pl.sprint.chatbot.client.model.ChatBot;
 import pl.sprint.chatbot.client.service.SprintBotClient;
 import pl.sprint.chatbot.client.model.Session;
@@ -31,11 +33,18 @@ public class TestThread implements Runnable
     }
     
     @Override
-    public void run() {                
-            testBot();             
+    public void run()
+    {
+        try
+        {
+            testBot();
+        } catch (BadRequestException e)
+        {
+            e.printStackTrace();
+        }
     }
     
-    private void testBot()
+    private void testBot() throws BadRequestException
     {
         try {
 
@@ -55,6 +64,8 @@ public class TestThread implements Runnable
             map.put("termindopobrania", "8");
             map.put("pesel", "43033104152");
             map.put("house", "70");
+
+
             Session session = cs.openSession(api_key, "windykacja","CHAT","TEST",map,null);
             
             
