@@ -16,7 +16,7 @@ public class Main
 {    
     private final static String ENDPOINT =  "https://localhost:8443/api";
     private final static String API_KEY = "Sprint";
-    private final static int THREADS = 1;
+    private final static int THREADS = 100;
     
     public static void main(String[] args) throws InterruptedException, IOException
     {

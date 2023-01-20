@@ -66,7 +66,7 @@ public class TestThread implements Runnable
             map.put("house", "70");
 
 
-            Session session = cs.openSession(api_key, "windykacja","CHAT","TEST",map,null);
+            Session session = cs.openSession(api_key, "testowa","CHAT","TEST",map,null);
             
             
             Map<String,String> respMap = cs.getSessionData(session.getSessionId()); 
@@ -74,7 +74,7 @@ public class TestThread implements Runnable
             respMap.forEach((key, value) -> System.out.println("respMap: " + key + ":" + value));
             
             Thread.sleep(1000);
-            ChatBot cb = cs.chat(session.getSessionId(), "STARTV PAN GODLEWSKI-ADAM 175 00 1 21-01-2022", api_key, true);
+            ChatBot cb = cs.chat(session.getSessionId(), "LINE", api_key, true);
             
             System.out.println("TextDuration: "  + cb.getTextDuration());
             System.out.println("countSessions: "  + cs.countSessions().getCount());
@@ -82,22 +82,25 @@ public class TestThread implements Runnable
             
             Thread.sleep(1000);
             
-            cb = cs.chat(session.getSessionId(), "tak", api_key, true);
+            cb = cs.chat(session.getSessionId(), "ST TEST1", api_key, true);
             System.out.println("TextDuration: "  + cb.getTextDuration());
             
             Thread.sleep(1000);
-            cb = cs.chat(session.getSessionId(), "chwila", api_key, true);
+            cb = cs.chat(session.getSessionId(), "DATA", api_key, true);
             System.out.println("TextDuration: "  + cb.getTextDuration());
-            cb = cs.chat(session.getSessionId(), "Siedlce Sokołowska 54 70", api_key,true);
+            cb = cs.chat(session.getSessionId(), "SA TEST", api_key,true);
             System.out.println("TextDuration: "  + cb.getTextDuration());
             //SCENRIUSZ
-            String topic = cs.chat(session.getSessionId(), "SCENRIUSZ", api_key, true).getTopic();
+            String topic = cs.chat(session.getSessionId(), "GETALL", api_key, true).getTopic();
             System.out.println("topic = " + topic);
             Thread.sleep(1000);
-            cs.chat(session.getSessionId(), "dzisiaj", api_key, true).getTopic();
-            Thread.sleep(1000);            
-            cs.chat(session.getSessionId(), "TERMINDOXDNI 09/07/2020", api_key, true).getTopic();
+
+            cb = cs.chat(session.getSessionId(), "NUMS 100", api_key,true);
+
+
             Thread.sleep(1000);
+
+            cb = cs.chat(session.getSessionId(), "PHONE 123456789", api_key,true);
             
             for(int i=0;i<5;i++)
             {
@@ -110,7 +113,7 @@ public class TestThread implements Runnable
             }
             
             
-            session =  cs.closeSession(session.getSessionId(),api_key, "windykacja");  
+            session =  cs.closeSession(session.getSessionId(),api_key, "testowa");
             
             System.out.println("removeSession session = " + session.getSessionId());
             
