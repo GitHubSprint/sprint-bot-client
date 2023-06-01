@@ -16,20 +16,10 @@ public class Main
 {    
     private final static String ENDPOINT =  "https://localhost:8443/api";
     private final static String API_KEY = "Sprint";
-    private final static int THREADS = 100;
-    
     public static void main(String[] args) throws InterruptedException, IOException
     {
-        
-        
-        //Test in concurent threads
-        for(int i=0; i < THREADS; i++)
-        {
-            TestThread m1=new TestThread(ENDPOINT, API_KEY);  
-            Thread t1 =new Thread(m1);  
-            t1.start(); 
-        }
- 
+        TestThread test = new TestThread(ENDPOINT, API_KEY);
+        test.start();
     }
     
     

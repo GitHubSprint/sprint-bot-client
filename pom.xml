@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>pl.sprint</groupId>
     <artifactId>sprint-bot-client</artifactId>
-    <version>1.5.1</version>
+    <version>1.5.2</version>
     <packaging>jar</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -11,18 +11,18 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <mainClass>pl.sprint.chatbot.client.Main</mainClass>        
     </properties>
-    <dependencies>                
+    <dependencies>
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-json</artifactId>
             <version>1.19.4</version>
-        </dependency> 
+        </dependency>
     </dependencies>
     <build>
     <!-- // [END os-maven-plugin] -->
-    
     <plugins>      
         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-jar-plugin</artifactId>
             <version>3.1.2</version>
             <configuration>

@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
  */
 public class SprintBotClient {
     
-    private int timeout = 15000;
+    private int timeout = 5000;
     private String endpoint;   
 
     /**
@@ -116,12 +116,12 @@ public class SprintBotClient {
         if(data != null && !data.isEmpty())
             cbd.setData(data);
                         
-        HttpURLConnection connection = connection(endpoint + "/session", "POST", cbd);
+        HttpURLConnection conn = connection(endpoint + "/session", "POST", cbd);
         Session session = null;
 
-        if(checkStatusResponse(connection) == 200)
+        if(checkStatusResponse(conn) == 200)
         {
-            try (InputStream responseStream = connection.getInputStream())
+            try (InputStream responseStream = conn.getInputStream())
             {
                 ObjectMapper mapper = new ObjectMapper();
                 session = mapper.readValue(responseStream, Session.class);
