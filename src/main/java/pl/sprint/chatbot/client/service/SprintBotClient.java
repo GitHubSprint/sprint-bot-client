@@ -72,7 +72,7 @@ public class SprintBotClient {
         this.endpoint = endpoint;
     }
     
-    private HttpsURLConnection connection(String endpoint, String method, Object inputObject) throws MalformedURLException, IOException
+    private HttpsURLConnection connection(String endpoint, String method, Object inputObject) throws IOException
     {
         URL url=new URL(endpoint);
         HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
@@ -89,7 +89,7 @@ public class SprintBotClient {
             String json = objectMapper.writeValueAsString(inputObject);
 
             try(OutputStream os = con.getOutputStream()) {
-                byte[] input = json.getBytes("utf-8");
+                byte[] input = json.getBytes(StandardCharsets.UTF_8);
                 os.write(input, 0, input.length);			
             }             
         }
@@ -109,7 +109,7 @@ public class SprintBotClient {
      * @return
      * @throws IOException 
      */
-    public Session openSession(String key, String botname, String channel, String username, Map<String,String> data, String wave) throws BadRequestException, Exception
+    public Session openSession(String key, String botname, String channel, String username, Map<String,String> data, String wave) throws Exception
     {                
         ChatBotData cbd = new ChatBotData(key,botname, channel, username, wave);
         
@@ -121,8 +121,7 @@ public class SprintBotClient {
 
         if(checkStatusResponse(conn) == 200)
         {
-            try (InputStream responseStream = conn.getInputStream())
-            {
+            try (InputStream responseStream = conn.getInputStream()) {
                 ObjectMapper mapper = new ObjectMapper();
                 session = mapper.readValue(responseStream, Session.class);
 
@@ -133,32 +132,26 @@ public class SprintBotClient {
     }
 
 
-    private int checkStatusResponse(HttpURLConnection connection) throws BadRequestException, IOException, RuntimeException, JSONException
-    {
-
+    private int checkStatusResponse(HttpURLConnection connection) throws BadRequestException, IOException, RuntimeException, JSONException {
         int code = connection.getResponseCode();
         if(code == 200)
             return code;
         else if (code == 400) {
-            try (InputStream responseStream = connection.getErrorStream())
-            {
+            try (InputStream responseStream = connection.getErrorStream()) {
                 String json = new BufferedReader(
                         new InputStreamReader(responseStream, StandardCharsets.UTF_8))
                         .lines()
                         .collect(Collectors.joining("\n"));
                 JSONObject obj = new JSONObject(json);
-                String status = obj.getString("status");
+                String status = obj.getString("error");
 
-                if(obj.has("text"))
-                {
-                    status += " " + obj.getString("text");
+                if(obj.has("error_description")) {
+                    status += " : " + obj.getString("error_description");
                 }
                 throw new BadRequestException(status);
             }
 
-        }
-        else
-        {
+        } else {
             throw new RuntimeException("Failed : HTTP error code : "
                     + code);
         }
@@ -172,15 +165,13 @@ public class SprintBotClient {
      * @return
      * @throws IOException 
      */
-    public Session closeSession(String sessionId, String key, String botname) throws IOException, Exception
+    public Session closeSession(String sessionId, String key, String botname) throws Exception
     {
 
         HttpURLConnection connection = connection(endpoint + "/session/" + sessionId, "DELETE", new ChatBotData(key,botname));
         Session session = null;
-        if(checkStatusResponse(connection) == 200)
-        {
-            try (InputStream responseStream = connection.getInputStream())
-            {
+        if(checkStatusResponse(connection) == 200) {
+            try (InputStream responseStream = connection.getInputStream()) {
                 ObjectMapper mapper = new ObjectMapper();
                 session = mapper.readValue(responseStream, Session.class);
 
@@ -191,8 +182,7 @@ public class SprintBotClient {
     }
     
     
-    public SimpleModel addMessageToSend(String to, String from, String subject, String text, List<String> attachments, boolean isHtmlContent, String key, String session) throws IOException, Exception
-    {
+    public SimpleModel addMessageToSend(String to, String from, String subject, String text, List<String> attachments, boolean isHtmlContent, String key, String session) throws Exception {
 
         HttpURLConnection connection = connection(endpoint + "/addmessage/" + session, "POST", new EmailData(to, from, subject, text, isHtmlContent, key, attachments));
         SimpleModel simpleModel = null;
@@ -271,8 +261,7 @@ public class SprintBotClient {
      * @return 
      * @throws java.io.IOException 
      */
-    public Session updateSession(String sessionId, SessionUpdate update) throws Exception
-    {
+    public Session updateSession(String sessionId, SessionUpdate update) throws Exception {
         
         HttpURLConnection connection = connection(endpoint + "/session/" + sessionId, "PUT", update);
         Session session = null;
@@ -298,8 +287,7 @@ public class SprintBotClient {
      * @throws IOException
      * @throws Exception 
      */
-    public Session updateData(String sessionId, Map<String,String> data) throws IOException, Exception
-    {
+    public Session updateData(String sessionId, Map<String,String> data) throws IOException, Exception {
         
         HttpURLConnection connection = connection(endpoint + "/session/" + sessionId, "POST", data);
         Session session = null;
@@ -326,8 +314,7 @@ public class SprintBotClient {
      * @return 
      */    
     @Deprecated
-    public Session updateDataBot20(String sessionId, Map<String,String> data) throws IOException, Exception
-    {
+    public Session updateDataBot20(String sessionId, Map<String,String> data) throws IOException, Exception {
         
         HttpURLConnection connection = connection(endpoint + "/session/" + sessionId, "PUT", data);
         Session session;
@@ -345,8 +332,7 @@ public class SprintBotClient {
      * @return
      * @throws IOException 
      */
-    public CountSessions countSessions(String channel) throws IOException
-    { 
+    public CountSessions countSessions(String channel) throws IOException {
         
         HttpURLConnection connection = connection(endpoint + "/session/count?channel=" + channel, "GET", null);
         CountSessions result;
@@ -358,8 +344,7 @@ public class SprintBotClient {
         return result;                
     }
     
-    public CountSessions countSessions() throws IOException
-    {
+    public CountSessions countSessions() throws IOException {
 
         HttpURLConnection connection = connection(endpoint + "/session/count/", "GET", null);
         CountSessions result;
@@ -381,15 +366,12 @@ public class SprintBotClient {
      * @throws UnsupportedEncodingException
      * @throws IOException 
      */
-    public ChatBot chat(String sessionId, String chatQuery, String key, boolean bargeIn) throws IOException, BadRequestException, JSONException
-    {
+    public ChatBot chat(String sessionId, String chatQuery, String key, boolean bargeIn) throws IOException, BadRequestException, JSONException {
         
         HttpURLConnection connection = connection(endpoint + "/chat", "POST", new ChatBotDTO(sessionId, chatQuery, key, bargeIn));
         ChatBot response = null;
-        if(checkStatusResponse(connection) == 200)
-        {
-            try (InputStream responseStream = connection.getInputStream())
-            {
+        if(checkStatusResponse(connection) == 200) {
+            try (InputStream responseStream = connection.getInputStream()) {
                 ObjectMapper mapper = new ObjectMapper();
                 response = mapper.readValue(responseStream, ChatBot.class);
             }
@@ -406,10 +388,8 @@ public class SprintBotClient {
     /**
      * Reoves SSL veryfication
      */
-    public static void disableSslVerification() 
-    {
-        try
-        {
+    public static void disableSslVerification() {
+        try {
             // Create a trust manager that does not validate certificate chains
             TrustManager[] trustAllCerts = new TrustManager[] {new X509TrustManager() {
                 public java.security.cert.X509Certificate[] getAcceptedIssuers() {

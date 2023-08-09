@@ -90,5 +90,19 @@ public class ChatBot {
     
     public void setText(String text){ this.text = text;}
     public String getText(){ return this.text;}
-      
+
+    @Override
+    public String toString() {
+        return "ChatBot{" +
+                "sessionId='" + sessionId + '\'' +
+                ", status='" + status + '\'' +
+                ", text='" + text + '\'' +
+                ", prevQuestion='" + prevQuestion + '\'' +
+                ", currentQuestion='" + currentQuestion + '\'' +
+                ", prevText='" + prevText + '\'' +
+                ", answers=" + answers +
+                ", topic='" + topic + '\'' +
+                ", textDuration=" + textDuration +
+                '}';
+    }
 }
