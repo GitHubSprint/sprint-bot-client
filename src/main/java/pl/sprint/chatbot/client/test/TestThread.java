@@ -21,7 +21,7 @@ public class TestThread
 {
     private final String api_key;
     private final String endpoint;
-    private final int threads = 150;
+    private final int threads = 5;
 
 
     public TestThread(String endpoint, String api_key)
