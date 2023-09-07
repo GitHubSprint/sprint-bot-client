@@ -12,11 +12,9 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import pl.sprint.chatbot.client.BadRequestException;
 import pl.sprint.chatbot.client.model.*;
-
 import javax.net.ssl.*;
 import java.io.*;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
@@ -72,10 +70,10 @@ public class SprintBotClient {
         this.endpoint = endpoint;
     }
     
-    private HttpsURLConnection connection(String endpoint, String method, Object inputObject) throws IOException
-    {
+    private HttpURLConnection connection(String endpoint, String method, Object inputObject) throws IOException {
         URL url=new URL(endpoint);
-        HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
+        HttpURLConnection  con = (HttpURLConnection) url.openConnection();
+
         con.setRequestMethod(method);
         con.setRequestProperty("Content-Type", "application/json; utf-8");
         con.setRequestProperty("Accept", "application/json");
@@ -165,8 +163,7 @@ public class SprintBotClient {
      * @return
      * @throws IOException 
      */
-    public Session closeSession(String sessionId, String key, String botname) throws Exception
-    {
+    public Session closeSession(String sessionId, String key, String botname) throws Exception {
 
         HttpURLConnection connection = connection(endpoint + "/session/" + sessionId, "DELETE", new ChatBotData(key,botname));
         Session session = null;
@@ -308,7 +305,7 @@ public class SprintBotClient {
      * Set BotData 
      * @throws java.io.IOException
      * @deprecated
-     * This method delete all extData and add new, please use <p> Use {@link ClientService#updateData(java.lang.String, java.util.Map)} instead.
+     * This method delete all extData and add new, please use <p> Use {@link SprintBotClient#updateData(java.lang.String, java.util.Map)} instead.
      * @param sessionId
      * @param data extension data
      * @return 

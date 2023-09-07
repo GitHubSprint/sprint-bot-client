@@ -6,8 +6,10 @@
 
 package pl.sprint.chatbot.client.model;
 
-import java.util.List;
+
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import java.util.List;
+
 
 /**
  *
