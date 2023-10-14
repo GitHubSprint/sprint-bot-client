@@ -30,20 +30,19 @@ import java.util.Map;
  */
 public class SprintBotClient {
     
-    private int timeout = 5000;
-    private String endpoint;
+    private final int timeout;
+    private final String endpoint;
     private final ObjectMapper mapper = new ObjectMapper();
     /**
      * Constructor 
-     * @param endpoint Bot Endpoint 
+     * @param endpoint Bot Endpoint
      */
-    public SprintBotClient(String endpoint) 
-    {                 
-        this.endpoint = endpoint;        
+    public SprintBotClient(String endpoint) {
+        timeout = 5000;
+        this.endpoint = endpoint;
     }
-    public SprintBotClient(String endpoint, int timeout) 
-    {                 
-        this.endpoint = endpoint;   
+    public SprintBotClient(String endpoint, int timeout) {
+        this.endpoint = endpoint;
         this.timeout = timeout;
     }
 
@@ -54,9 +53,6 @@ public class SprintBotClient {
     public int getTimeout() {
         return timeout;
     }
-    public void setTimeout(int timeout) {
-        this.timeout = timeout;
-    }
 
     /**
      * Get and set Endpoint
@@ -64,9 +60,6 @@ public class SprintBotClient {
      */
     public String getEndpoint() {
         return endpoint;
-    }
-    public void setEndpoint(String endpoint) {
-        this.endpoint = endpoint;
     }
     
     private HttpURLConnection connection(String endpoint, String method, Object inputObject) throws IOException {
@@ -80,16 +73,13 @@ public class SprintBotClient {
         con.setConnectTimeout(timeout);
         con.setReadTimeout(timeout);
         
-        if(inputObject != null)
-        {
+        if(inputObject != null) {
             String json = mapper.writeValueAsString(inputObject);
             try(OutputStream os = con.getOutputStream()) {
                 byte[] input = json.getBytes(StandardCharsets.UTF_8);
                 os.write(input, 0, input.length);			
             }             
         }
-                       
-        
         return con;
     }
 
@@ -104,8 +94,7 @@ public class SprintBotClient {
      * @return
      * @throws IOException 
      */
-    public Session openSession(String key, String botname, String channel, String username, Map<String,String> data, String wave) throws Exception
-    {                
+    public Session openSession(String key, String botname, String channel, String username, Map<String,String> data, String wave) throws Exception {
         ChatBotData cbd = new ChatBotData(key,botname, channel, username, wave);
         
         if(data != null && !data.isEmpty())
@@ -120,7 +109,6 @@ public class SprintBotClient {
                 session = mapper.readValue(responseStream, Session.class);
             }
         }
-
         return session;
     }
 
@@ -135,7 +123,6 @@ public class SprintBotClient {
                 ErrorResponse error = mapper.readValue(responseStream, ErrorResponse.class);
                 throw new BadRequestException(error.getMessage());
             }
-
         } else {
             throw new RuntimeException("Failed : HTTP error code : "
                     + code);
@@ -150,14 +137,13 @@ public class SprintBotClient {
      * @return
      * @throws IOException 
      */
-    public Session closeSession(String sessionId, String key, String botname) throws Exception {
+    public Session closeSession(String sessionId, String key, String botname) throws IOException, BadRequestException {
 
         HttpURLConnection connection = connection(endpoint + "/session/" + sessionId, "DELETE", new ChatBotData(key,botname));
         Session session = null;
         if(checkStatusResponse(connection) == 200) {
             try (InputStream responseStream = connection.getInputStream()) {
                 session = mapper.readValue(responseStream, Session.class);
-
             }
         }
         return session; 
@@ -165,7 +151,7 @@ public class SprintBotClient {
     }
     
     
-    public SimpleModel addMessageToSend(String to, String from, String subject, String text, List<String> attachments, boolean isHtmlContent, String key, String session) throws Exception {
+    public SimpleModel addMessageToSend(String to, String from, String subject, String text, List<String> attachments, boolean isHtmlContent, String key, String session) throws IOException, BadRequestException {
 
         HttpURLConnection connection = connection(endpoint + "/addmessage/" + session, "POST", new EmailData(to, from, subject, text, isHtmlContent, key, attachments));
         SimpleModel simpleModel = null;
@@ -184,7 +170,7 @@ public class SprintBotClient {
      * @return
      * @throws java.io.IOException
      */
-    public Map<String,String> getSessionData(String sessionId) throws Exception {
+    public Map<String,String> getSessionData(String sessionId) throws IOException {
         HttpURLConnection connection = connection(endpoint + "/session/" + sessionId, "GET", null);
         Map<String,String> result = new HashMap<>();
         try (InputStream responseStream = connection.getInputStream()) {
@@ -192,7 +178,6 @@ public class SprintBotClient {
                 TypeReference<HashMap<String, String>> typeRef = new TypeReference<HashMap<String, String>>() {};
                 result = mapper.readValue(responseStream, typeRef);
             }
-            
         }
         catch(EOFException ex)
         {
@@ -208,20 +193,16 @@ public class SprintBotClient {
      * @return
      * @throws java.io.IOException
      */
-    public Map<String,String> getSessionDbData(String sessionId) throws Exception
-    {
+    public Map<String,String> getSessionDbData(String sessionId) throws IOException {
         HttpURLConnection connection = connection(endpoint + "/session/db/" + sessionId, "GET", null);
         Map<String,String> result = new HashMap<>();
         try (InputStream responseStream = connection.getInputStream()) {
-            if(responseStream != null)
-            {
+            if(responseStream != null) {
                 TypeReference<HashMap<String, String>> typeRef = new TypeReference<HashMap<String, String>>() {};
                 result = mapper.readValue(responseStream, typeRef);                
             }
             
-        }
-        catch(EOFException ex)
-        {
+        } catch(EOFException ex) {
             result = new HashMap<>();
         }
         return result;
@@ -234,21 +215,17 @@ public class SprintBotClient {
      * @return 
      * @throws java.io.IOException 
      */
-    public Session updateSession(String sessionId, SessionUpdate update) throws Exception {
+    public Session updateSession(String sessionId, SessionUpdate update) throws IOException, BadRequestException {
         
         HttpURLConnection connection = connection(endpoint + "/session/" + sessionId, "PUT", update);
         Session session = null;
 
-        if(checkStatusResponse(connection) == 200)
-        {
-            try (InputStream responseStream = connection.getInputStream())
-            {
+        if(checkStatusResponse(connection) == 200) {
+            try (InputStream responseStream = connection.getInputStream()) {
                 session = mapper.readValue(responseStream, Session.class);
-
             }
         }
-        return session; 
-        
+        return session;
     }
     
     /**
@@ -259,13 +236,12 @@ public class SprintBotClient {
      * @throws IOException
      * @throws Exception 
      */
-    public Session updateData(String sessionId, Map<String,String> data) throws IOException, Exception {
+    public Session updateData(String sessionId, Map<String,String> data) throws IOException, BadRequestException {
         
         HttpURLConnection connection = connection(endpoint + "/session/" + sessionId, "POST", data);
         Session session = null;
 
-        if(checkStatusResponse(connection) == 200)
-        {
+        if(checkStatusResponse(connection) == 200) {
             try (InputStream responseStream = connection.getInputStream()) {
                 session = mapper.readValue(responseStream, Session.class);
             }
@@ -283,7 +259,7 @@ public class SprintBotClient {
      * @return 
      */    
     @Deprecated
-    public Session updateDataBot20(String sessionId, Map<String,String> data) throws Exception {
+    public Session updateDataBot20(String sessionId, Map<String,String> data) throws IOException {
         
         HttpURLConnection connection = connection(endpoint + "/session/" + sessionId, "PUT", data);
         Session session;
@@ -378,11 +354,7 @@ public class SprintBotClient {
 
             // Install the all-trusting host verifier
             HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (KeyManagementException e) {
-            e.printStackTrace();
-        }
+        } catch (NoSuchAlgorithmException | KeyManagementException ignored) {}
     }
     
     
