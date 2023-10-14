@@ -3,7 +3,6 @@
  * Contact: slawomir.kostrzewa@sprint.pl
 
  */
-package pl.sprint.chatbot.client.test;
 
 import pl.sprint.chatbot.client.model.ChatBot;
 import pl.sprint.chatbot.client.model.Session;
@@ -24,8 +23,7 @@ public class TestThread
     private final int threads = 5;
 
 
-    public TestThread(String endpoint, String api_key)
-    {
+    public TestThread(String endpoint, String api_key) {
         this.endpoint = endpoint;
         this.api_key = api_key;
     }
