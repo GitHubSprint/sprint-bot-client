@@ -6,12 +6,12 @@
 package pl.sprint.chatbot.client.service;
 
 
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
-import pl.sprint.chatbot.client.BadRequestException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import pl.sprint.chatbot.client.error.BadRequestException;
+import pl.sprint.chatbot.client.error.ErrorResponse;
 import pl.sprint.chatbot.client.model.*;
+
 import javax.net.ssl.*;
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -23,7 +23,6 @@ import java.security.cert.X509Certificate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * SprintBot client service class.
@@ -32,8 +31,8 @@ import java.util.stream.Collectors;
 public class SprintBotClient {
     
     private int timeout = 5000;
-    private String endpoint;   
-
+    private String endpoint;
+    private final ObjectMapper mapper = new ObjectMapper();
     /**
      * Constructor 
      * @param endpoint Bot Endpoint 
@@ -83,9 +82,7 @@ public class SprintBotClient {
         
         if(inputObject != null)
         {
-            ObjectMapper objectMapper = new ObjectMapper(); 
-            String json = objectMapper.writeValueAsString(inputObject);
-
+            String json = mapper.writeValueAsString(inputObject);
             try(OutputStream os = con.getOutputStream()) {
                 byte[] input = json.getBytes(StandardCharsets.UTF_8);
                 os.write(input, 0, input.length);			
@@ -120,9 +117,7 @@ public class SprintBotClient {
         if(checkStatusResponse(conn) == 200)
         {
             try (InputStream responseStream = conn.getInputStream()) {
-                ObjectMapper mapper = new ObjectMapper();
                 session = mapper.readValue(responseStream, Session.class);
-
             }
         }
 
@@ -130,23 +125,15 @@ public class SprintBotClient {
     }
 
 
-    private int checkStatusResponse(HttpURLConnection connection) throws BadRequestException, IOException, RuntimeException, JSONException {
+    private int checkStatusResponse(HttpURLConnection connection) throws BadRequestException, IOException, RuntimeException {
         int code = connection.getResponseCode();
         if(code == 200)
             return code;
+
         else if (code == 400) {
             try (InputStream responseStream = connection.getErrorStream()) {
-                String json = new BufferedReader(
-                        new InputStreamReader(responseStream, StandardCharsets.UTF_8))
-                        .lines()
-                        .collect(Collectors.joining("\n"));
-                JSONObject obj = new JSONObject(json);
-                String status = obj.getString("error");
-
-                if(obj.has("error_description")) {
-                    status += " : " + obj.getString("error_description");
-                }
-                throw new BadRequestException(status);
+                ErrorResponse error = mapper.readValue(responseStream, ErrorResponse.class);
+                throw new BadRequestException(error.getMessage());
             }
 
         } else {
@@ -169,7 +156,6 @@ public class SprintBotClient {
         Session session = null;
         if(checkStatusResponse(connection) == 200) {
             try (InputStream responseStream = connection.getInputStream()) {
-                ObjectMapper mapper = new ObjectMapper();
                 session = mapper.readValue(responseStream, Session.class);
 
             }
@@ -183,13 +169,9 @@ public class SprintBotClient {
 
         HttpURLConnection connection = connection(endpoint + "/addmessage/" + session, "POST", new EmailData(to, from, subject, text, isHtmlContent, key, attachments));
         SimpleModel simpleModel = null;
-        if(checkStatusResponse(connection) == 200)
-        {
-            try (InputStream responseStream = connection.getInputStream())
-            {
-                ObjectMapper mapper = new ObjectMapper();
+        if(checkStatusResponse(connection) == 200) {
+            try (InputStream responseStream = connection.getInputStream()) {
                 simpleModel = mapper.readValue(responseStream, SimpleModel.class);
-
             }
         }
         return simpleModel;                       
@@ -202,18 +184,13 @@ public class SprintBotClient {
      * @return
      * @throws java.io.IOException
      */
-    public Map<String,String> getSessionData(String sessionId) throws IOException, Exception
-    {
+    public Map<String,String> getSessionData(String sessionId) throws Exception {
         HttpURLConnection connection = connection(endpoint + "/session/" + sessionId, "GET", null);
         Map<String,String> result = new HashMap<>();
         try (InputStream responseStream = connection.getInputStream()) {
-            if(responseStream != null)
-            {
-                ObjectMapper mapper = new ObjectMapper();                
-                
+            if(responseStream != null) {
                 TypeReference<HashMap<String, String>> typeRef = new TypeReference<HashMap<String, String>>() {};
                 result = mapper.readValue(responseStream, typeRef);
-                
             }
             
         }
@@ -231,14 +208,13 @@ public class SprintBotClient {
      * @return
      * @throws java.io.IOException
      */
-    public Map<String,String> getSessionDbData(String sessionId) throws IOException, Exception
+    public Map<String,String> getSessionDbData(String sessionId) throws Exception
     {
         HttpURLConnection connection = connection(endpoint + "/session/db/" + sessionId, "GET", null);
         Map<String,String> result = new HashMap<>();
         try (InputStream responseStream = connection.getInputStream()) {
             if(responseStream != null)
             {
-                ObjectMapper mapper = new ObjectMapper();                                
                 TypeReference<HashMap<String, String>> typeRef = new TypeReference<HashMap<String, String>>() {};
                 result = mapper.readValue(responseStream, typeRef);                
             }
@@ -267,7 +243,6 @@ public class SprintBotClient {
         {
             try (InputStream responseStream = connection.getInputStream())
             {
-                ObjectMapper mapper = new ObjectMapper();
                 session = mapper.readValue(responseStream, Session.class);
 
             }
@@ -291,11 +266,8 @@ public class SprintBotClient {
 
         if(checkStatusResponse(connection) == 200)
         {
-            try (InputStream responseStream = connection.getInputStream())
-            {
-                ObjectMapper mapper = new ObjectMapper();
+            try (InputStream responseStream = connection.getInputStream()) {
                 session = mapper.readValue(responseStream, Session.class);
-
             }
         }
         return session;                                 
@@ -311,14 +283,12 @@ public class SprintBotClient {
      * @return 
      */    
     @Deprecated
-    public Session updateDataBot20(String sessionId, Map<String,String> data) throws IOException, Exception {
+    public Session updateDataBot20(String sessionId, Map<String,String> data) throws Exception {
         
         HttpURLConnection connection = connection(endpoint + "/session/" + sessionId, "PUT", data);
         Session session;
         try (InputStream responseStream = connection.getInputStream()) {
-            ObjectMapper mapper = new ObjectMapper();
             session = mapper.readValue(responseStream, Session.class);
-            
         }
         return session;                  
     }
@@ -334,9 +304,7 @@ public class SprintBotClient {
         HttpURLConnection connection = connection(endpoint + "/session/count?channel=" + channel, "GET", null);
         CountSessions result;
         try (InputStream responseStream = connection.getInputStream()) {
-            ObjectMapper mapper = new ObjectMapper();
             result = mapper.readValue(responseStream, CountSessions.class);
-            
         }
         return result;                
     }
@@ -346,9 +314,7 @@ public class SprintBotClient {
         HttpURLConnection connection = connection(endpoint + "/session/count/", "GET", null);
         CountSessions result;
         try (InputStream responseStream = connection.getInputStream()) {
-            ObjectMapper mapper = new ObjectMapper();
             result = mapper.readValue(responseStream, CountSessions.class);
-            
         }
         return result;                
     }
@@ -363,19 +329,18 @@ public class SprintBotClient {
      * @throws UnsupportedEncodingException
      * @throws IOException 
      */
-    public ChatBot chat(String sessionId, String chatQuery, String key, boolean bargeIn) throws IOException, BadRequestException, JSONException {
+    public ChatBot chat(String sessionId, String chatQuery, String key, boolean bargeIn) throws IOException, BadRequestException {
         
         HttpURLConnection connection = connection(endpoint + "/chat", "POST", new ChatBotDTO(sessionId, chatQuery, key, bargeIn));
         ChatBot response = null;
         if(checkStatusResponse(connection) == 200) {
             try (InputStream responseStream = connection.getInputStream()) {
-                ObjectMapper mapper = new ObjectMapper();
                 response = mapper.readValue(responseStream, ChatBot.class);
             }
         }
         return response;              
     }
-    public ChatBot chat(String sessionId, String chatQuery, String key) throws  IOException, BadRequestException, JSONException
+    public ChatBot chat(String sessionId, String chatQuery, String key) throws  IOException, BadRequestException
     {                
         return this.chat(sessionId,chatQuery,key,false);                
     }

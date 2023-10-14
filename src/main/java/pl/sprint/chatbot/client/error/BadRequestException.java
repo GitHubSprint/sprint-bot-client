@@ -1,4 +1,4 @@
-package pl.sprint.chatbot.client;
+package pl.sprint.chatbot.client.error;
 
 public class BadRequestException extends Exception
 {
