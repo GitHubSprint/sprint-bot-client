@@ -16,48 +16,41 @@ import java.util.concurrent.Executors;
  * Standard chat test.
  * @author Sławomir Kostrzewa
  */
-public class TestThread
-{
+public class TestChat {
     private final String api_key;
     private final String endpoint;
-    private final int threads = 5;
 
 
-    public TestThread(String endpoint, String api_key) {
+    public TestChat(String endpoint, String api_key) {
         this.endpoint = endpoint;
         this.api_key = api_key;
     }
 
-    public void start(){
-        SprintBotClient.disableSslVerification();
-        ExecutorService executorService = Executors.newFixedThreadPool(500);
 
-        for (int i = 0; i < threads; i++) {
-            executorService.execute(() -> {
-                try {
-                    testCEZBot();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            });
+    public void start() throws Exception {
+        SprintBotClient.disableSslVerification();
+
+        for (int i = 0; i < 5; i++) {
+            testCEZBot();
         }
-        executorService.shutdown();
     }
 
 
     private void testCEZBot() throws Exception {
-        SprintBotClient cs = new SprintBotClient(endpoint);
+        SprintBotClient sprintBotClient = new SprintBotClient(endpoint, 5000);
         Map<String,String> map = new HashMap<>();
-        Session session = cs.openSession(api_key, "testowa","CHAT","TEST", map,null);
+
+        Session session = sprintBotClient.openSession(api_key, "testowa","CHAT","TEST", map,null);
+
         System.out.println("Open session " + session.toString());
         map.put("session", session.getSessionId());
-        cs.updateData(session.getSessionId(), map);
+        sprintBotClient.updateData(session.getSessionId(), map);
 
-        ChatBot cb = cs.chat(session.getSessionId(), "ML", api_key, true);
+        ChatBot cb = sprintBotClient.chat(session.getSessionId(), "ML", api_key, true);
         System.out.println(cb);
-        cb = cs.chat(session.getSessionId(), "TAK", api_key, true);
+        cb = sprintBotClient.chat(session.getSessionId(), "TAK", api_key, true);
         System.out.println(cb);
-        session =  cs.closeSession(session.getSessionId(),api_key, "testowa");
+        session =  sprintBotClient.closeSession(session.getSessionId(),api_key, "testowa");
         System.out.println("Close session " + session.toString());
     }
     

@@ -2,17 +2,13 @@ import org.junit.jupiter.api.Test;
 
 public class ClientTest {
 
-    private final static String ENDPOINT =  "https://demo.sprintbot.ai:8443/api";
-    private final static String API_KEY = null;
+    private final static String ENDPOINT =  "https://localhost:8443/api";
+    private final static String API_KEY = "Sprint";
 
     @Test
     public void Test() throws Exception {
-
-        if(API_KEY == null)
-            return;
-
-
-        TestThread test = new TestThread(ENDPOINT, API_KEY);
+        System.out.println(ENDPOINT);
+        TestChat test = new TestChat(ENDPOINT, API_KEY);
         test.start();
     }
 

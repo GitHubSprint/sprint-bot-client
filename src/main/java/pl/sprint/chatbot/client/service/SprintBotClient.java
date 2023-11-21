@@ -103,8 +103,7 @@ public class SprintBotClient {
         HttpURLConnection conn = connection(endpoint + "/session", "POST", cbd);
         Session session = null;
 
-        if(checkStatusResponse(conn) == 200)
-        {
+        if(checkStatusResponse(conn) == 200) {
             try (InputStream responseStream = conn.getInputStream()) {
                 session = mapper.readValue(responseStream, Session.class);
             }
