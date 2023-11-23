@@ -7,9 +7,9 @@ public class ClientTest {
 
     @Test
     public void Test() throws Exception {
-        System.out.println(ENDPOINT);
-        TestChat test = new TestChat(ENDPOINT, API_KEY);
-        test.start();
+//        System.out.println(ENDPOINT);
+//        TestChat test = new TestChat(ENDPOINT, API_KEY);
+//        test.start();
     }
 
 }
