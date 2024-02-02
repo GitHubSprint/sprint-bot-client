@@ -214,6 +214,7 @@ public class SprintBotClient {
      * @return 
      * @throws java.io.IOException 
      */
+    @Deprecated
     public Session updateSession(String sessionId, SessionUpdate update) throws IOException, BadRequestException {
         
         HttpURLConnection connection = connection(endpoint + "/session/" + sessionId, "PUT", update);
@@ -246,26 +247,6 @@ public class SprintBotClient {
             }
         }
         return session;                                 
-    }
-    
-    /**
-     * Set BotData 
-     * @throws java.io.IOException
-     * @deprecated
-     * This method delete all extData and add new, please use <p> Use {@link SprintBotClient#updateData(java.lang.String, java.util.Map)} instead.
-     * @param sessionId
-     * @param data extension data
-     * @return 
-     */    
-    @Deprecated
-    public Session updateDataBot20(String sessionId, Map<String,String> data) throws IOException {
-        
-        HttpURLConnection connection = connection(endpoint + "/session/" + sessionId, "PUT", data);
-        Session session;
-        try (InputStream responseStream = connection.getInputStream()) {
-            session = mapper.readValue(responseStream, Session.class);
-        }
-        return session;                  
     }
     
     /**
