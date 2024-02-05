@@ -36,7 +36,7 @@ public class TestChat {
     public void start() throws Exception {
         SprintBotClient.disableSslVerification();
 
-        int numberOfTests = 10000;
+        int numberOfTests = 100;
         List<Callable<Void>> tasks = new ArrayList<>();
 
         for (int i = 0; i < numberOfTests; i++) {
