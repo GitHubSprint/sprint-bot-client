@@ -13,7 +13,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Main {
-    private final static String ENDPOINT =  "https://192.168.254.64:8443/api";
+    private final static String ENDPOINT =  "https://localhost:8443/api";
     private final static String API_KEY = "Sprint";
     public static void main(String[] args) throws Exception {
 
@@ -33,7 +33,7 @@ public class Main {
         private int cnt=0;
         private int cntMore = 0;
         private long avgTime = 0;
-        int numberOfTests = 100;
+        int numberOfTests = 1000;
 
         public TestChat() {
         }
