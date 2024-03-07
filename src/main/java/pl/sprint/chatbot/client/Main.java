@@ -33,7 +33,7 @@ public class Main {
         private int cnt=0;
         private int cntMore = 0;
         private long avgTime = 0;
-        int numberOfTests = 1000;
+        int numberOfTests = 10;
 
         public TestChat() {
         }
@@ -52,7 +52,7 @@ public class Main {
                 tasks.add(this::testCEZBot);
             }
 
-            ExecutorService executorService = Executors.newFixedThreadPool(100);
+            ExecutorService executorService = Executors.newFixedThreadPool(200);
             executorService.invokeAll(tasks);
             executorService.shutdown();
 
@@ -90,15 +90,10 @@ public class Main {
             sprintBotClient.updateData(session.getSessionId(), map);
             Map<String, String> sessionData = sprintBotClient.getSessionData(session.getSessionId());
             if(sessionData.isEmpty()) System.err.println("Empty MAP!!!");
-//        System.out.println("Session Data: \n" + sessionData);
-            cb = sprintBotClient.chat(session.getSessionId(), "NIE", API_KEY, true);
-//        System.out.println("NIE" + " - " + cb.getText());
 
+            cb = sprintBotClient.chat(session.getSessionId(), "NIE", API_KEY, true);
             cb = sprintBotClient.chat(session.getSessionId(), "TAK", API_KEY, true);
-//        System.out.println("TAK" + " - " + cb.getText());
-
             cb = sprintBotClient.chat(session.getSessionId(), "NIE", API_KEY, true);
-//        System.out.println("NIE" + " - " + cb.getText());
 
             long startTime = System.currentTimeMillis();
             map = new HashMap<>();
@@ -142,10 +137,8 @@ public class Main {
             }
             cnt++;
             cb = sprintBotClient.chat(session.getSessionId(), "NIE", API_KEY, true);
-//        System.out.println("NIE" + " - " + cb.getText());
 
             session =  sprintBotClient.closeSession(session.getSessionId(),API_KEY, "testowa");
-//        System.out.println("Close session " + session.toString());
             return null;
         }
     }

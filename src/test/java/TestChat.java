@@ -36,7 +36,7 @@ public class TestChat {
     public void start() throws Exception {
         SprintBotClient.disableSslVerification();
 
-        int numberOfTests = 100;
+        int numberOfTests = 500;
         List<Callable<Void>> tasks = new ArrayList<>();
 
         for (int i = 0; i < numberOfTests; i++) {
@@ -66,7 +66,7 @@ public class TestChat {
 
         ChatBot cb = sprintBotClient.chat(session.getSessionId(), "ML", api_key, true);
 //        System.out.println(cb);
-        Thread.sleep(2000);
+//        Thread.sleep(2000);
         cb = sprintBotClient.chat(session.getSessionId(), "TAK", api_key, true);
 //        System.out.println("TAK" + " - " + cb.getText());
         map = new HashMap<>();

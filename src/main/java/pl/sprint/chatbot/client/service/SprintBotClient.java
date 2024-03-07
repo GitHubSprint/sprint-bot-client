@@ -214,7 +214,6 @@ public class SprintBotClient {
      * @return 
      * @throws java.io.IOException 
      */
-    @Deprecated
     public Session updateSession(String sessionId, SessionUpdate update) throws IOException, BadRequestException {
         
         HttpURLConnection connection = connection(endpoint + "/session/" + sessionId, "PUT", update);
@@ -236,17 +235,9 @@ public class SprintBotClient {
      * @throws IOException
      * @throws Exception 
      */
-    public Session updateData(String sessionId, Map<String,String> data) throws IOException, BadRequestException {
-        
+    public void updateData(String sessionId, Map<String,String> data) throws IOException, BadRequestException {
         HttpURLConnection connection = connection(endpoint + "/session/" + sessionId, "POST", data);
-        Session session = null;
-
-        if(checkStatusResponse(connection) == 200) {
-            try (InputStream responseStream = connection.getInputStream()) {
-                session = mapper.readValue(responseStream, Session.class);
-            }
-        }
-        return session;                                 
+        checkStatusResponse(connection);
     }
     
     /**
