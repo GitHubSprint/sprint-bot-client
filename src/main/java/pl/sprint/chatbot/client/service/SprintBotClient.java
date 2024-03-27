@@ -116,15 +116,11 @@ public class SprintBotClient {
         int code = connection.getResponseCode();
         if(code == 200)
             return code;
-
-        else if (code == 400) {
+        else {
             try (InputStream responseStream = connection.getErrorStream()) {
                 ErrorResponse error = mapper.readValue(responseStream, ErrorResponse.class);
                 throw new BadRequestException(error.getMessage());
             }
-        } else {
-            throw new RuntimeException("Failed : HTTP error code : "
-                    + code);
         }
     }
     

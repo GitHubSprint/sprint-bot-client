@@ -19,6 +19,9 @@ public class ErrorResponse{
     @JsonProperty("status")
     private int status;
 
+    @JsonProperty("error_description")
+    private String description;
+
     public String getPath(){
         return path;
     }
