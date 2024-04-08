@@ -100,14 +100,15 @@ public class SprintBotClient {
         if(data != null && !data.isEmpty())
             cbd.setData(data);
                         
-        HttpURLConnection conn = connection(endpoint + "/session", "POST", cbd);
+        HttpURLConnection connection = connection(endpoint + "/session", "POST", cbd);
         Session session = null;
 
-        if(checkStatusResponse(conn) == 200) {
-            try (InputStream responseStream = conn.getInputStream()) {
+        if(checkStatusResponse(connection) == 200) {
+            try (InputStream responseStream = connection.getInputStream()) {
                 session = mapper.readValue(responseStream, Session.class);
             }
         }
+        connection.disconnect();
         return session;
     }
 
@@ -141,6 +142,7 @@ public class SprintBotClient {
                 session = mapper.readValue(responseStream, Session.class);
             }
         }
+        connection.disconnect();
         return session; 
               
     }
@@ -155,6 +157,7 @@ public class SprintBotClient {
                 simpleModel = mapper.readValue(responseStream, SimpleModel.class);
             }
         }
+        connection.disconnect();
         return simpleModel;                       
     }
         
@@ -173,11 +176,10 @@ public class SprintBotClient {
                 TypeReference<HashMap<String, String>> typeRef = new TypeReference<HashMap<String, String>>() {};
                 result = mapper.readValue(responseStream, typeRef);
             }
-        }
-        catch(EOFException ex)
-        {
+        } catch(EOFException ex) {
             result = new HashMap<>();
         }
+        connection.disconnect();
         return result;
     }
     
@@ -200,6 +202,7 @@ public class SprintBotClient {
         } catch(EOFException ex) {
             result = new HashMap<>();
         }
+        connection.disconnect();
         return result;
     }
     
@@ -220,6 +223,7 @@ public class SprintBotClient {
                 session = mapper.readValue(responseStream, Session.class);
             }
         }
+        connection.disconnect();
         return session;
     }
     
@@ -234,6 +238,7 @@ public class SprintBotClient {
     public void updateData(String sessionId, Map<String,String> data) throws IOException, BadRequestException {
         HttpURLConnection connection = connection(endpoint + "/session/" + sessionId, "POST", data);
         checkStatusResponse(connection);
+        connection.disconnect();
     }
     
     /**
@@ -249,6 +254,8 @@ public class SprintBotClient {
         try (InputStream responseStream = connection.getInputStream()) {
             result = mapper.readValue(responseStream, CountSessions.class);
         }
+        connection.disconnect();
+
         return result;                
     }
     
@@ -259,6 +266,7 @@ public class SprintBotClient {
         try (InputStream responseStream = connection.getInputStream()) {
             result = mapper.readValue(responseStream, CountSessions.class);
         }
+        connection.disconnect();
         return result;                
     }
     
@@ -281,10 +289,10 @@ public class SprintBotClient {
                 response = mapper.readValue(responseStream, ChatBot.class);
             }
         }
+        connection.disconnect();
         return response;              
     }
-    public ChatBot chat(String sessionId, String chatQuery, String key) throws  IOException, BadRequestException
-    {                
+    public ChatBot chat(String sessionId, String chatQuery, String key) throws  IOException, BadRequestException {
         return this.chat(sessionId,chatQuery,key,false);                
     }
     
