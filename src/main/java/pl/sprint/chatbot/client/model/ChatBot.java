@@ -30,7 +30,8 @@ public class ChatBot {
     private List<String> answers; 
 
     private String topic;        
-    private int textDuration; 
+    private int textDuration;
+    private boolean bargeIn = false;
 
     public List<String> getAnswers() {
         return answers;
@@ -39,7 +40,6 @@ public class ChatBot {
     public void setAnswers(List<String> answers) {
         this.answers = answers;
     }
-            
 
     public int getTextDuration() {
         return textDuration;
@@ -94,6 +94,14 @@ public class ChatBot {
     public void setText(String text){ this.text = text;}
     public String getText(){ return this.text;}
 
+    public boolean isBargeIn() {
+        return bargeIn;
+    }
+
+    public void setBargeIn(boolean bargeIn) {
+        this.bargeIn = bargeIn;
+    }
+
     @Override
     public String toString() {
         return "ChatBot{" +
@@ -106,6 +114,7 @@ public class ChatBot {
                 ", answers=" + answers +
                 ", topic='" + topic + '\'' +
                 ", textDuration=" + textDuration +
+                ", bargeIn=" + bargeIn +
                 '}';
     }
 }

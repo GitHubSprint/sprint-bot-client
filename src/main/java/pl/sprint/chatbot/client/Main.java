@@ -13,7 +13,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Main {
-    private final static String ENDPOINT =  "https://192.168.254.64:8443/api";
+    private final static String ENDPOINT =  "https://demo.sprintbot.ai:8443/api";
     private final static String API_KEY = "Sprint";
 
 
@@ -35,7 +35,7 @@ public class Main {
         private int cnt=1;
         private int cntMore = 0;
         private long avgTime = 0;
-        int numberOfTests = 3000;
+        int numberOfTests = 1;
         private final static SprintBotClient sprintBotClient = new SprintBotClient(ENDPOINT, 5000);
 
         public TestChat() {
@@ -54,7 +54,7 @@ public class Main {
                 tasks.add(this::test);
             }
 
-            ExecutorService executorService = Executors.newFixedThreadPool(100);
+            ExecutorService executorService = Executors.newFixedThreadPool(200);
             executorService.invokeAll(tasks);
             executorService.shutdown();
 
@@ -91,9 +91,9 @@ public class Main {
                 Map<String, String> sessionData = sprintBotClient.getSessionData(session.getSessionId());
                 if (sessionData.isEmpty()) System.err.println("Empty MAP!!!");
 
-                sprintBotClient.chat(session.getSessionId(), "NIE", API_KEY, true);
-                sprintBotClient.chat(session.getSessionId(), "NIE", API_KEY, true);
+                ChatBot chatBot = sprintBotClient.chat(session.getSessionId(), "NIE", API_KEY, true);
 
+                System.out.println(chatBot);
 
                 long startTime = System.currentTimeMillis();
                 sprintBotClient.chat(session.getSessionId(), "NIE", API_KEY, true);
