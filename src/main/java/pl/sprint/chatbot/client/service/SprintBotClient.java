@@ -10,6 +10,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import pl.sprint.chatbot.client.error.BadRequestException;
 import pl.sprint.chatbot.client.error.ErrorResponse;
+import pl.sprint.chatbot.client.error.InternalServerException;
 import pl.sprint.chatbot.client.model.*;
 
 import javax.net.ssl.*;
@@ -38,7 +39,7 @@ public class SprintBotClient {
      * @param endpoint Bot Endpoint
      */
     public SprintBotClient(String endpoint) {
-        timeout = 5000;
+        timeout = 20000;
         this.endpoint = endpoint;
     }
     public SprintBotClient(String endpoint, int timeout) {
@@ -71,7 +72,7 @@ public class SprintBotClient {
         con.setRequestProperty("Accept", "application/json");
         con.setDoOutput(true);
         con.setConnectTimeout(timeout);
-        con.setReadTimeout(timeout);
+        con.setReadTimeout(timeout + 1000);
         
         if(inputObject != null) {
             String json = mapper.writeValueAsString(inputObject);
@@ -103,7 +104,7 @@ public class SprintBotClient {
         HttpURLConnection connection = connection(endpoint + "/session", "POST", cbd);
         Session session = null;
 
-        if(checkStatusResponse(connection) == 200) {
+        if(checkStatusResponse(connection, "openSession") == 200) {
             try (InputStream responseStream = connection.getInputStream()) {
                 session = mapper.readValue(responseStream, Session.class);
             }
@@ -113,15 +114,19 @@ public class SprintBotClient {
     }
 
 
-    private int checkStatusResponse(HttpURLConnection connection) throws BadRequestException, IOException, RuntimeException {
-        int code = connection.getResponseCode();
-        if(code == 200)
-            return code;
-        else {
-            try (InputStream responseStream = connection.getErrorStream()) {
-                ErrorResponse error = mapper.readValue(responseStream, ErrorResponse.class);
-                throw new BadRequestException(error.getMessage());
+    private int checkStatusResponse(HttpURLConnection connection, String method) throws InternalServerException {
+        try {
+            int code = connection.getResponseCode();
+            if(code == 200)
+                return code;
+            else {
+                try (InputStream responseStream = connection.getErrorStream()) {
+                    ErrorResponse error = mapper.readValue(responseStream, ErrorResponse.class);
+                    throw new BadRequestException(method + " -> " + error.getMessage());
+                }
             }
+        } catch (Exception ex) {
+            throw new InternalServerException(method + " -> " + ex.getMessage());
         }
     }
     
@@ -133,11 +138,11 @@ public class SprintBotClient {
      * @return
      * @throws IOException 
      */
-    public Session closeSession(String sessionId, String key, String botname) throws IOException, BadRequestException {
+    public Session closeSession(String sessionId, String key, String botname) throws IOException, InternalServerException {
 
         HttpURLConnection connection = connection(endpoint + "/session/" + sessionId, "DELETE", new ChatBotData(key,botname));
         Session session = null;
-        if(checkStatusResponse(connection) == 200) {
+        if(checkStatusResponse(connection, "closeSession") == 200) {
             try (InputStream responseStream = connection.getInputStream()) {
                 session = mapper.readValue(responseStream, Session.class);
             }
@@ -148,11 +153,11 @@ public class SprintBotClient {
     }
     
     
-    public SimpleModel addMessageToSend(String to, String from, String subject, String text, List<String> attachments, boolean isHtmlContent, String key, String session) throws IOException, BadRequestException {
+    public SimpleModel addMessageToSend(String to, String from, String subject, String text, List<String> attachments, boolean isHtmlContent, String key, String session) throws IOException, InternalServerException {
 
         HttpURLConnection connection = connection(endpoint + "/addmessage/" + session, "POST", new EmailData(to, from, subject, text, isHtmlContent, key, attachments));
         SimpleModel simpleModel = null;
-        if(checkStatusResponse(connection) == 200) {
+        if(checkStatusResponse(connection, "addMessageToSend") == 200) {
             try (InputStream responseStream = connection.getInputStream()) {
                 simpleModel = mapper.readValue(responseStream, SimpleModel.class);
             }
@@ -213,12 +218,12 @@ public class SprintBotClient {
      * @return 
      * @throws java.io.IOException 
      */
-    public Session updateSession(String sessionId, SessionUpdate update) throws IOException, BadRequestException {
+    public Session updateSession(String sessionId, SessionUpdate update) throws IOException, InternalServerException {
         
         HttpURLConnection connection = connection(endpoint + "/session/" + sessionId, "PUT", update);
         Session session = null;
 
-        if(checkStatusResponse(connection) == 200) {
+        if(checkStatusResponse(connection, "updateSession") == 200) {
             try (InputStream responseStream = connection.getInputStream()) {
                 session = mapper.readValue(responseStream, Session.class);
             }
@@ -235,9 +240,9 @@ public class SprintBotClient {
      * @throws IOException
      * @throws Exception 
      */
-    public void updateData(String sessionId, Map<String,String> data) throws IOException, BadRequestException {
+    public void updateData(String sessionId, Map<String,String> data) throws IOException, InternalServerException {
         HttpURLConnection connection = connection(endpoint + "/session/" + sessionId, "POST", data);
-        checkStatusResponse(connection);
+        checkStatusResponse(connection, "updateData");
         connection.disconnect();
     }
     
@@ -280,11 +285,11 @@ public class SprintBotClient {
      * @throws UnsupportedEncodingException
      * @throws IOException 
      */
-    public ChatBot chat(String sessionId, String chatQuery, String key, boolean bargeIn) throws IOException, BadRequestException {
+    public ChatBot chat(String sessionId, String chatQuery, String key, boolean bargeIn) throws IOException, InternalServerException {
         
         HttpURLConnection connection = connection(endpoint + "/chat", "POST", new ChatBotDTO(sessionId, chatQuery, key, bargeIn));
         ChatBot response = null;
-        if(checkStatusResponse(connection) == 200) {
+        if(checkStatusResponse(connection, "chat") == 200) {
             try (InputStream responseStream = connection.getInputStream()) {
                 response = mapper.readValue(responseStream, ChatBot.class);
             }
@@ -292,7 +297,7 @@ public class SprintBotClient {
         connection.disconnect();
         return response;              
     }
-    public ChatBot chat(String sessionId, String chatQuery, String key) throws  IOException, BadRequestException {
+    public ChatBot chat(String sessionId, String chatQuery, String key) throws  IOException, InternalServerException {
         return this.chat(sessionId,chatQuery,key,false);                
     }
     
