@@ -39,10 +39,10 @@ public class Main {
     }
 
     private static class TestChat {
-        private int cnt=1;
+        private int cnt = 1;
         private int cntMore = 0;
         private long avgTime = 0;
-        int numberOfTests = 500;
+        int numberOfTests = 100;
         private final static SprintBotClient sprintBotClient = new SprintBotClient(ENDPOINT, 5000);
 
         public TestChat() {
@@ -82,7 +82,6 @@ public class Main {
 
 
                 Map<String, String> map = new HashMap<>();
-
 
                 Session session = sprintBotClient.openSession(API_KEY, "testowa", "CHAT", "TEST", map, null);
 
