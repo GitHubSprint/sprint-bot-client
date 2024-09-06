@@ -117,11 +117,15 @@ public class SprintBotClient {
     private int checkStatusResponse(HttpURLConnection connection, String method) throws InternalServerException {
         try {
             int code = connection.getResponseCode();
+
             if(code == 200)
                 return code;
             else {
                 try (InputStream responseStream = connection.getErrorStream()) {
                     ErrorResponse error = mapper.readValue(responseStream, ErrorResponse.class);
+
+                    System.out.println(error.getMessage());
+
                     throw new BadRequestException(method + " -> " + error.getMessage());
                 }
             }

@@ -1,7 +1,9 @@
 package pl.sprint.chatbot.client.error;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ErrorResponse{
 
     @JsonProperty("path")
@@ -17,7 +19,7 @@ public class ErrorResponse{
     private String timestamp;
 
     @JsonProperty("status")
-    private int status;
+    private String status;
 
     @JsonProperty("error_description")
     private String description;
@@ -38,7 +40,7 @@ public class ErrorResponse{
         return timestamp;
     }
 
-    public int getStatus(){
+    public String getStatus(){
         return status;
     }
 }
