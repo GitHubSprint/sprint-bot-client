@@ -15,8 +15,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Main {
-//    private final static String ENDPOINT =  "https://192.168.254.64:8443/api";
-    private final static String ENDPOINT =  "https://localhost:8443/api";
+    private final static String ENDPOINT =  "https://192.168.254.64:8443/api";
+//    private final static String ENDPOINT =  "https://localhost:8443/api";
     private final static String API_KEY = "Sprint";
 
     private static int errorOpenSession = 0;
@@ -43,8 +43,8 @@ public class Main {
         private int cnt = 1;
         private int cntMore = 0;
         private long avgTime = 0;
-        int numberOfTests = 500;
-        private final static SprintBotClient sprintBotClient = new SprintBotClient(ENDPOINT, 5000);
+        int numberOfTests = 300;
+        private final static SprintBotClient sprintBotClient = new SprintBotClient(ENDPOINT, 20000);
 
         public TestChat() {
             SprintBotClient.disableSslVerification();
