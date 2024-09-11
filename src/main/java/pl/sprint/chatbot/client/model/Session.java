@@ -10,8 +10,7 @@ package pl.sprint.chatbot.client.model;
  * Session object
  * @author skost
  */
-public class Session 
-{
+public class Session {
     private String sessionId;
     private boolean created;  
     private String sessionCreated;
