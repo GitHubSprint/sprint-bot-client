@@ -24,17 +24,13 @@ public class Main {
     private static int errorCloseSession = 0;
     private static int errorUpdate = 0;
     private static int error = 0;
+    private static final int threads = 300;
+    private static final int numberOfTests = 1;
 
     public static void main(String[] args) throws Exception {
 
         System.out.println(ENDPOINT);
-        TestChat test;
-
-        if(args.length > 0)
-            test = new TestChat(Integer.parseInt(args[0]));
-        else
-            test = new TestChat();
-
+        TestChat test = new TestChat();
         test.start();
 
     }
@@ -43,16 +39,14 @@ public class Main {
         private int cnt = 1;
         private int cntMore = 0;
         private long avgTime = 0;
-        int numberOfTests = 300;
+
         private final static SprintBotClient sprintBotClient = new SprintBotClient(ENDPOINT, 20000);
 
         public TestChat() {
             SprintBotClient.disableSslVerification();
         }
 
-        public TestChat(int numberOfTests) {
-            this.numberOfTests = numberOfTests;
-        }
+
 
         public void start() throws InterruptedException {
 
@@ -62,7 +56,7 @@ public class Main {
                 tasks.add(this::test);
             }
 
-            ExecutorService executorService = Executors.newFixedThreadPool(120);
+            ExecutorService executorService = Executors.newFixedThreadPool(threads);
             executorService.invokeAll(tasks);
             executorService.shutdown();
 
@@ -91,7 +85,7 @@ public class Main {
 
                 sprintBotClient.updateData(session.getSessionId(), map);
                 sprintBotClient.chat(session.getSessionId(), "DATA", API_KEY, false);
-                sprintBotClient.chat(session.getSessionId(), "TAGS", API_KEY, false);
+                sprintBotClient.chat(session.getSessionId(), "GETALL", API_KEY, false);
                 map = new HashMap<>();
                 map.put("a", "Łódź");
                 map.put("b", "Warszawa");
@@ -106,11 +100,8 @@ public class Main {
                 Map<String, String> sessionData = sprintBotClient.getSessionData(session.getSessionId());
                 if (sessionData.isEmpty()) System.err.println("Empty MAP!!!");
 
-                ChatBot chatBot = sprintBotClient.chat(session.getSessionId(), "LUBIE śliwki", API_KEY, false);
 
-                System.out.println(chatBot);
-
-
+                long startTime = System.currentTimeMillis();
                 sprintBotClient.chat(session.getSessionId(), "TXT2NUM dwa", API_KEY, false);
                 map = new HashMap<>();
                 map.put("h", "Łódź");
@@ -125,12 +116,7 @@ public class Main {
                 sessionData = sprintBotClient.getSessionData(session.getSessionId());
                 if (sessionData.isEmpty()) System.err.println("Empty MAP!!!");
 
-                sprintBotClient.chat(session.getSessionId(), "TXT2NUM dwa", API_KEY, false);
-                sprintBotClient.chat(session.getSessionId(), "ML", API_KEY, false);
-
-
-                long startTime = System.currentTimeMillis();
-                sprintBotClient.chat(session.getSessionId(), "tak", API_KEY, true);
+                sprintBotClient.chat(session.getSessionId(), "TXT2NUM jeden", API_KEY, false);
                 long endTime = System.currentTimeMillis();
                 long timeInMs = endTime - startTime;
 
