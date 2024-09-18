@@ -1,11 +1,8 @@
 package pl.sprint.chatbot.client;
 
-import pl.sprint.chatbot.client.error.InternalServerException;
-import pl.sprint.chatbot.client.model.ChatBot;
 import pl.sprint.chatbot.client.model.Session;
 import pl.sprint.chatbot.client.service.SprintBotClient;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,17 +12,21 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Main {
-    private final static String ENDPOINT =  "https://192.168.254.64:8443/api";
-//    private final static String ENDPOINT =  "https://localhost:8443/api";
+
+    private final static String ENDPOINT =  "https://localhost:8443/api";
     private final static String API_KEY = "Sprint";
+
+    //ilość jednoczesnych sesji
+    private static final int THREADS = 20;
+    //ilość sesji do testów
+    private static final int NUMBER_OF_TESTS = 30000;
 
     private static int errorOpenSession = 0;
     private static int errorChat = 0;
     private static int errorCloseSession = 0;
     private static int errorUpdate = 0;
     private static int error = 0;
-    private static final int threads = 300;
-    private static final int numberOfTests = 1;
+
 
     public static void main(String[] args) throws Exception {
 
@@ -52,11 +53,11 @@ public class Main {
 
             List<Callable<Void>> tasks = new ArrayList<>();
 
-            for (int i = 0; i < numberOfTests; i++) {
+            for (int i = 0; i < NUMBER_OF_TESTS; i++) {
                 tasks.add(this::test);
             }
 
-            ExecutorService executorService = Executors.newFixedThreadPool(threads);
+            ExecutorService executorService = Executors.newFixedThreadPool(THREADS);
             executorService.invokeAll(tasks);
             executorService.shutdown();
 
@@ -77,8 +78,18 @@ public class Main {
 
 
                 Map<String, String> map = new HashMap<>();
+                Session session = null;
+                try {
+                    session = sprintBotClient.openSession(API_KEY, "testowa", "CHAT", "TEST", map, null);
+                } catch (Exception ex) {
+                    System.err.println(ex.getMessage());
+                }
 
-                Session session = sprintBotClient.openSession(API_KEY, "testowa", "CHAT", "TEST", map, null);
+                if(session == null){
+                    System.err.println("Session is null!!!");
+                    return null;
+                }
+
 
                 sessionId = session.getSessionId();
                 map.put("session", session.getSessionId());
