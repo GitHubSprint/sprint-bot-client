@@ -44,7 +44,7 @@ public class Main {
         private final static SprintBotClient sprintBotClient = new SprintBotClient(ENDPOINT, 20000);
 
         public TestChat() {
-            SprintBotClient.disableSslVerification();
+
         }
 
 

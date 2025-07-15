@@ -1,34 +1,25 @@
-/*
- * Copyright © 2022 Sprint S.A.
- * Contact: slawomir.kostrzewa@sprint.pl
- *
- * Refactored to use Unirest library.
- */
 package pl.sprint.chatbot.client.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import kong.unirest.GenericType;
-import kong.unirest.HttpResponse;
-import kong.unirest.Unirest;
-import kong.unirest.jackson.JacksonObjectMapper;
+import okhttp3.*;
 import pl.sprint.chatbot.client.model.*;
+
+import javax.net.ssl.*;
+import java.io.IOException;
+import java.security.cert.X509Certificate;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
-/**
- * SprintBot client service class (using Unirest).
- * @author skost
- */
 public class SprintBotClient {
 
     private final String endpoint;
     private final int timeout;
     private final ObjectMapper mapper = new ObjectMapper();
+    private final OkHttpClient client;
+    private final MediaType JSON = MediaType.get("application/json; charset=utf-8");
 
-    /**
-     * Constructor
-     * @param endpoint Bot Endpoint
-     */
     public SprintBotClient(String endpoint) {
         this(endpoint, 20000);
     }
@@ -36,14 +27,7 @@ public class SprintBotClient {
     public SprintBotClient(String endpoint, int timeout) {
         this.endpoint = endpoint;
         this.timeout = timeout;
-        // Configure Unirest instance
-        Unirest.config()
-                .setObjectMapper(new JacksonObjectMapper(mapper))
-                .connectTimeout(timeout)
-                .socketTimeout(timeout + 1000)
-                .setDefaultHeader("Accept", "application/json")
-                .setDefaultHeader("Content-Type", "application/json; charset=utf-8")
-                .verifySsl(false);
+        this.client = createUnsafeClient(timeout);
     }
 
     public int getTimeout() {
@@ -54,158 +38,121 @@ public class SprintBotClient {
         return endpoint;
     }
 
-
-
-    /**
-     * Create session
-     * @param key chatbot api key
-     * @param botname name of bota
-     * @param channel name of channel like VOICE, CHAT etc.
-     * @param username username e.g. phone number
-     * @param data additional chat data
-     * @param wave IVR System Session ID
-     * @return Session object
-     */
-    public Session openSession(String key, String botname, String channel, String username, Map<String, String> data, String wave) {
+    public Session openSession(String key, String botname, String channel, String username, Map<String, String> data, String wave) throws IOException {
         ChatBotData cbd = new ChatBotData(key, botname, channel, username, wave);
-        if (data != null && !data.isEmpty()) {
-            cbd.setData(data);
-        }
+        if (data != null && !data.isEmpty()) cbd.setData(data);
 
-        HttpResponse<Session> response = Unirest.post(endpoint + "/session")
-                .body(cbd)
-                .asObject(Session.class);
-
-        return response.getBody();
+        Request request = buildPostRequest("/session", cbd);
+        return execute(request, Session.class);
     }
 
-    /**
-     * Removes sessions
-     * @param sessionId SessionId
-     * @param key Bot API KEY
-     * @param botname name of Bot
-     * @return Closed session object
-     */
-    public Session closeSession(String sessionId, String key, String botname) {
-        HttpResponse<Session> response = Unirest.delete(endpoint + "/session/{sessionId}")
-                .routeParam("sessionId", sessionId)
-                .body(new ChatBotData(key, botname))
-                .asObject(Session.class);
-
-        return response.getBody();
+    public Session closeSession(String sessionId, String key, String botname) throws IOException {
+        ChatBotData cbd = new ChatBotData(key, botname);
+        Request request = buildRequestWithBody("/session/" + sessionId, cbd, "DELETE");
+        return execute(request, Session.class);
     }
 
-    public SimpleModel addMessageToSend(String to, String from, String subject, String text, List<String> attachments, boolean isHtmlContent, String key, String session) {
+    public SimpleModel addMessageToSend(String to, String from, String subject, String text, List<String> attachments, boolean isHtmlContent, String key, String session) throws IOException {
         EmailData emailData = new EmailData(to, from, subject, text, isHtmlContent, key, attachments);
-        HttpResponse<SimpleModel> response = Unirest.post(endpoint + "/addmessage/{session}")
-                .routeParam("session", session)
-                .body(emailData)
-                .asObject(SimpleModel.class);
-
-        return response.getBody();
+        Request request = buildPostRequest("/addmessage/" + session, emailData);
+        return execute(request, SimpleModel.class);
     }
 
-    /**
-     * Retrieve bot data from session
-     * @param sessionId SessionId
-     * @return Map of session data
-     */
-    public Map<String, String> getSessionData(String sessionId) {
-        HttpResponse<Map<String, String>> response = Unirest.get(endpoint + "/session/{sessionId}")
-                .routeParam("sessionId", sessionId)
-                .asObject(new GenericType<Map<String, String>>() {});
-
-        // Return an empty map if body is null to match original behavior (e.g., for EOFException)
-        return response.getBody();
+    public Map<String, String> getSessionData(String sessionId) throws IOException {
+        Request request = new Request.Builder().url(endpoint + "/session/" + sessionId).get().build();
+        return execute(request, new TypeReference<Map<String, String>>() {});
     }
 
-    /**
-     * Retrieve bot data from DB
-     * @param sessionId SessionId
-     * @return Map of session data from DB
-     */
-    public Map<String, String> getSessionDbData(String sessionId) {
-        HttpResponse<Map<String, String>> response = Unirest.get(endpoint + "/session/db/{sessionId}")
-                .routeParam("sessionId", sessionId)
-                .asObject(new GenericType<Map<String, String>>() {});
-
-        return response.getBody();
+    public Map<String, String> getSessionDbData(String sessionId) throws IOException {
+        Request request = new Request.Builder().url(endpoint + "/session/db/" + sessionId).get().build();
+        return execute(request, new TypeReference<Map<String, String>>() {});
     }
 
-    /**
-     * Update bot data
-     * @param sessionId SessionId
-     * @param update SessionUpdate object
-     * @return Updated session object
-     */
-    public Session updateSession(String sessionId, SessionUpdate update) {
-        HttpResponse<Session> response = Unirest.put(endpoint + "/session/{sessionId}")
-                .routeParam("sessionId", sessionId)
-                .body(update)
-                .asObject(Session.class);
-
-        return response.getBody();
+    public Session updateSession(String sessionId, SessionUpdate update) throws IOException {
+        Request request = buildRequestWithBody("/session/" + sessionId, update, "PUT");
+        return execute(request, Session.class);
     }
 
-    /**
-     * Update session extData
-     * @param sessionId SessionId
-     * @param data extension data
-     */
-    public void updateData(String sessionId, Map<String, String> data) {
-        Unirest.post(endpoint + "/session/{sessionId}")
-                .routeParam("sessionId", sessionId)
-                .body(data)
-                .asEmpty();
-
+    public void updateData(String sessionId, Map<String, String> data) throws IOException {
+        Request request = buildPostRequest("/session/" + sessionId, data);
+        client.newCall(request).execute().close();
     }
 
-    /**
-     * Retrieve count of active sessions.
-     * @param channel name of channel
-     * @return Count of sessions
-     */
-    public CountSessions countSessions(String channel) {
-        HttpResponse<CountSessions> response = Unirest.get(endpoint + "/session/count")
-                .queryString("channel", channel)
-                .asObject(CountSessions.class);
-
-        return response.getBody();
+    public CountSessions countSessions(String channel) throws IOException {
+        HttpUrl url = HttpUrl.parse(endpoint + "/session/count").newBuilder().addQueryParameter("channel", channel).build();
+        Request request = new Request.Builder().url(url).get().build();
+        return execute(request, CountSessions.class);
     }
 
-    public CountSessions countSessions() {
-        HttpResponse<CountSessions> response = Unirest.get(endpoint + "/session/count/")
-                .asObject(CountSessions.class);
-
-        return response.getBody();
+    public CountSessions countSessions() throws IOException {
+        Request request = new Request.Builder().url(endpoint + "/session/count/").get().build();
+        return execute(request, CountSessions.class);
     }
 
-    /**
-     * Chatting
-     * @param sessionId SessionId
-     * @param chatQuery customer input
-     * @param key Bot API KEY
-     * @param bargeIn is BargeIn
-     * @return Bot Output
-     */
-    public ChatBot chat(String sessionId, String chatQuery, String key, boolean bargeIn) {
+    public ChatBot chat(String sessionId, String chatQuery, String key, boolean bargeIn) throws IOException {
         ChatBotDTO chatData = new ChatBotDTO(sessionId, chatQuery, key, bargeIn);
-        HttpResponse<ChatBot> response = Unirest.post(endpoint + "/chat")
-                .body(chatData)
-                .asObject(ChatBot.class);
-
-        return response.getBody();
+        Request request = buildPostRequest("/chat", chatData);
+        return execute(request, ChatBot.class);
     }
 
-    public ChatBot chat(String sessionId, String chatQuery, String key) {
+    public ChatBot chat(String sessionId, String chatQuery, String key) throws IOException {
         return this.chat(sessionId, chatQuery, key, false);
     }
 
-    /**
-     * Disables SSL verification for all requests.
-     * NOTE: Use with caution, intended for development/testing with self-signed certificates.
-     */
-    public static void disableSslVerification() {
-        Unirest.config().verifySsl(false);
+    private Request buildPostRequest(String path, Object body) throws IOException {
+        String json = mapper.writeValueAsString(body);
+        RequestBody requestBody = RequestBody.create(json, JSON);
+        return new Request.Builder()
+                .url(endpoint + path)
+                .post(requestBody)
+                .build();
+    }
+
+    private Request buildRequestWithBody(String path, Object body, String method) throws IOException {
+        String json = mapper.writeValueAsString(body);
+        RequestBody requestBody = RequestBody.create(json, JSON);
+        return new Request.Builder()
+                .url(endpoint + path)
+                .method(method, requestBody)
+                .build();
+    }
+
+    private <T> T execute(Request request, Class<T> clazz) throws IOException {
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+            String body = response.body().string();
+            return mapper.readValue(body, clazz);
+        }
+    }
+
+    private <T> T execute(Request request, TypeReference<T> typeRef) throws IOException {
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+            String body = response.body().string();
+            return mapper.readValue(body, typeRef);
+        }
+    }
+
+    private OkHttpClient createUnsafeClient(int timeoutMillis) {
+        try {
+            TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
+                public void checkClientTrusted(X509Certificate[] chain, String authType) {}
+                public void checkServerTrusted(X509Certificate[] chain, String authType) {}
+                public X509Certificate[] getAcceptedIssuers() { return new X509Certificate[0]; }
+            }};
+
+            SSLContext sslContext = SSLContext.getInstance("SSL");
+            sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
+
+            return new OkHttpClient.Builder()
+                    .sslSocketFactory(sslContext.getSocketFactory(), (X509TrustManager) trustAllCerts[0])
+                    .hostnameVerifier((hostname, session) -> true)
+                    .connectTimeout(timeoutMillis, TimeUnit.MILLISECONDS)
+                    .readTimeout(timeoutMillis + 1000L, TimeUnit.MILLISECONDS)
+                    .build();
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
