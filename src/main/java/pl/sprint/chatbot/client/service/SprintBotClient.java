@@ -42,7 +42,8 @@ public class SprintBotClient {
                 .connectTimeout(timeout)
                 .socketTimeout(timeout + 1000)
                 .setDefaultHeader("Accept", "application/json")
-                .setDefaultHeader("Content-Type", "application/json; charset=utf-8");
+                .setDefaultHeader("Content-Type", "application/json; charset=utf-8")
+                .verifySsl(false);
     }
 
     public int getTimeout() {
