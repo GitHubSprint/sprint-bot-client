@@ -13,13 +13,13 @@ import java.util.concurrent.Executors;
 
 public class Main {
 
-    private final static String ENDPOINT =  "https://localhost:8443/api";
+    private final static String ENDPOINT =  "https://192.168.200.201:8443/api";
     private final static String API_KEY = "Sprint";
 
     //ilość jednoczesnych sesji
     private static final int THREADS = 20;
     //ilość sesji do testów
-    private static final int NUMBER_OF_TESTS = 30000;
+    private static final int NUMBER_OF_TESTS = 1000;
 
     private static int errorOpenSession = 0;
     private static int errorChat = 0;
