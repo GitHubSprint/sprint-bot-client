@@ -18,7 +18,8 @@ public class EmailData {
     private String text;
     private boolean isHtmlContent;
     private String key;
-    private List<String> attachments; 
+    private List<String> attachments;
+    private String symbol = "sprint"; // default symbol, can be overridden
     
     public EmailData() {
     }
@@ -32,7 +33,7 @@ public class EmailData {
 //        this.key = key;
 //    }
 
-    public EmailData(String to, String from, String subject, String text, boolean isHtmlContent, String key, List<String> attachments) {
+    public EmailData(String to, String from, String subject, String text, boolean isHtmlContent, String key, List<String> attachments, String symbol) {
         this.to = to;
         this.from = from;
         this.subject = subject;
@@ -40,6 +41,7 @@ public class EmailData {
         this.isHtmlContent = isHtmlContent;
         this.key = key;
         this.attachments = attachments;
+        this.symbol = symbol != null ? symbol : "sprint";
     }
     
     
