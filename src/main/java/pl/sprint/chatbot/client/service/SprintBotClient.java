@@ -75,17 +75,32 @@ public class SprintBotClient {
 
     public void updateData(String sessionId, Map<String, String> data) throws IOException {
         Request request = buildPostRequest("/session/" + sessionId, data);
-        client.newCall(request).execute().close();
+        client.newCall(request)
+                .execute()
+                .close();
     }
 
     public CountSessions countSessions(String channel) throws IOException {
-        HttpUrl url = HttpUrl.parse(endpoint + "/session/count").newBuilder().addQueryParameter("channel", channel).build();
-        Request request = new Request.Builder().url(url).get().build();
+        HttpUrl url = HttpUrl
+                .parse(endpoint + "/session/count")
+                .newBuilder()
+                .addQueryParameter("channel", channel)
+                .build();
+
+        Request request = new Request
+                .Builder()
+                .url(url)
+                .get()
+                .build();
         return execute(request, CountSessions.class);
     }
 
     public CountSessions countSessions() throws IOException {
-        Request request = new Request.Builder().url(endpoint + "/session/count/").get().build();
+        Request request = new Request
+                .Builder()
+                .url(endpoint + "/session/count/")
+                .get()
+                .build();
         return execute(request, CountSessions.class);
     }
 
@@ -110,7 +125,8 @@ public class SprintBotClient {
 
     private Request buildRequestWithBody(String path, Object body, String method) throws IOException {
         String json = mapper.writeValueAsString(body);
-        RequestBody requestBody = RequestBody.create(json, JSON);
+        RequestBody requestBody = RequestBody
+                .create(json, JSON);
         return new Request.Builder()
                 .url(endpoint + path)
                 .method(method, requestBody)
@@ -120,16 +136,17 @@ public class SprintBotClient {
     private <T> T execute(Request request, Class<T> clazz) throws IOException {
         try (Response response = client.newCall(request).execute()) {
             if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
-            String body = response.body().string();
-            return mapper.readValue(body, clazz);
+
+            String body = response.body() != null ? response.body().string() : null;
+            return body != null ? mapper.readValue(body, clazz) : null;
         }
     }
 
     private <T> T execute(Request request, TypeReference<T> typeRef) throws IOException {
         try (Response response = client.newCall(request).execute()) {
             if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
-            String body = response.body().string();
-            return mapper.readValue(body, typeRef);
+            String body = response.body() != null ? response.body().string() : null;
+            return body != null ? mapper.readValue(body, typeRef) : null;
         }
     }
 
