@@ -1,25 +1,23 @@
 package pl.sprint.chatbot.client;
 
+import pl.sprint.chatbot.client.model.ChatBot;
 import pl.sprint.chatbot.client.model.Session;
 import pl.sprint.chatbot.client.service.SprintBotClient;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Main {
 
-    private final static String ENDPOINT =  "https://192.168.200.201:8443/api";
+    private final static String ENDPOINT =  "https://localhost:8443/api";
     private final static String API_KEY = "Sprint";
 
     //ilość jednoczesnych sesji
     private static final int THREADS = 20;
     //ilość sesji do testów
-    private static final int NUMBER_OF_TESTS = 1000;
+    private static final int NUMBER_OF_TESTS = 20;
 
     private static int errorOpenSession = 0;
     private static int errorChat = 0;
@@ -133,6 +131,14 @@ public class Main {
 
                 avgTime = avgTime + timeInMs;
                 System.out.println(cnt + ": Time " + timeInMs + " ms");
+
+
+                ChatBot chat = sprintBotClient.chat(session.getSessionId(), "PLUGIN " + session.getSessionId(), API_KEY, false);
+
+                if(!chat.getText().equals(session.getSessionId()))
+                    System.err.println("Invalid PLUGIN response: " + chat.getText() + "     SESSION: " + session.getSessionId());
+                else
+                    System.out.println(cnt + " PLUGIN: " + chat.getText());
 
                 sprintBotClient.closeSession(session.getSessionId(), API_KEY, "testowa");
 
