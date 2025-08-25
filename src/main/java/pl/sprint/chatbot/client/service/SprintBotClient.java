@@ -52,8 +52,8 @@ public class SprintBotClient {
         return execute(request, Session.class);
     }
 
-    public SimpleModel addMessageToSend(String to, String from, String subject, String text, List<String> attachments, boolean isHtmlContent, String key, String session, String symbol) throws IOException {
-        EmailData emailData = new EmailData(to, from, subject, text, isHtmlContent, key, attachments, symbol);
+    public SimpleModel addMessageToSend(String to, String from, String subject, String text, List<String> attachments, boolean isHtmlContent, String key, String session, String symbol, String template) throws IOException {
+        EmailData emailData = new EmailData(to, from, subject, text, isHtmlContent, key, attachments, symbol, template);
         Request request = buildPostRequest("/addmessage/" + session, emailData);
         return execute(request, SimpleModel.class);
     }
