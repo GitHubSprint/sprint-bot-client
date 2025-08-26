@@ -16,7 +16,7 @@ public class EmailData {
     private String from;
     private String subject;
     private String text;
-    private boolean isHtmlContent;
+    private Boolean htmlContent;
     private String key;
     private List<String> attachments;
     private String symbol = "sprint"; // default symbol, can be overridden
@@ -25,21 +25,12 @@ public class EmailData {
     public EmailData() {
     }
 
-//    public EmailData(String to, String from, String subject, String text, boolean isHtmlContent, String key) {
-//        this.to = to;
-//        this.from = from;
-//        this.subject = subject;
-//        this.text = text;
-//        this.isHtmlContent = isHtmlContent;
-//        this.key = key;
-//    }
-
     public EmailData(String to, String from, String subject, String text, boolean isHtmlContent, String key, List<String> attachments, String symbol, String template) {
         this.to = to;
         this.from = from;
         this.subject = subject;
         this.text = text;
-        this.isHtmlContent = isHtmlContent;
+        this.htmlContent = isHtmlContent;
         this.key = key;
         this.attachments = attachments;
         this.symbol = symbol != null ? symbol : "sprint";
@@ -100,17 +91,17 @@ public class EmailData {
         this.text = text;
     }
 
-    public boolean isIsHtmlContent() {
-        return isHtmlContent;
+    public Boolean getHtmlContent() {
+        return htmlContent;
     }
 
-    public void setIsHtmlContent(boolean isHtmlContent) {
-        this.isHtmlContent = isHtmlContent;
+    public void setHtmlContent(Boolean htmlContent) {
+        this.htmlContent = htmlContent;
     }
 
     @Override
     public String toString() {
-        return "EmailData{" + "to=" + to + ", subject=" + subject + ", text=" + text + ", isHtmlContent=" + isHtmlContent + '}';
+        return "EmailData{" + "to=" + to + ", subject=" + subject + ", text=" + text + ", htmlContent=" + htmlContent + '}';
     }
     
     
