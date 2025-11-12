@@ -17,7 +17,7 @@ public class Main {
     //ilość jednoczesnych sesji
     private static final int THREADS = 20;
     //ilość sesji do testów
-    private static final int NUMBER_OF_TESTS = 20;
+    private static final int NUMBER_OF_TESTS = 100;
 
     private static int errorOpenSession = 0;
     private static int errorChat = 0;
@@ -92,6 +92,15 @@ public class Main {
                 sessionId = session.getSessionId();
                 map.put("session", session.getSessionId());
 
+                sprintBotClient.chat(session.getSessionId(), "SETDATA test jeden", API_KEY, false);
+                ChatBot getdataTest = sprintBotClient.chat(session.getSessionId(), "GETDATA test", API_KEY, false);
+
+                System.out.println(cnt + " GETDATA: " + getdataTest);
+
+                sprintBotClient.chat(session.getSessionId(), "SETDATA test dwa", API_KEY, false);
+                getdataTest = sprintBotClient.chat(session.getSessionId(), "GETDATA test", API_KEY, false);
+                System.out.println(cnt + " GETDATA2: " + getdataTest);
+
                 sprintBotClient.updateData(session.getSessionId(), map);
                 sprintBotClient.chat(session.getSessionId(), "DATA", API_KEY, false);
                 sprintBotClient.chat(session.getSessionId(), "GETALL", API_KEY, false);
@@ -125,6 +134,33 @@ public class Main {
                 sessionData = sprintBotClient.getSessionData(session.getSessionId());
                 if (sessionData.isEmpty()) System.err.println("Empty MAP!!!");
 
+
+                map.put("d","Dąbrowa górnicza");
+                map.put("e","Elbląg");
+                map.put("f","Frąbork");
+                map.put("g","Gniezno");
+                map.put("h", "Hajnówka");
+                map.put("i", "Iława");
+                map.put("j", "Jarosław");
+                map.put("k", "Kołobrzeg");
+                map.put("l", "Lublin");
+                map.put("m", "Mielec");
+                map.put("n", "Nowy Sącz");
+                map.put("o", "Opole");
+                map.put("p", "Płock");
+                map.put("r", "Rzeszów");
+                map.put("s", "Sopot");
+                map.put("t", "Toruń");
+                map.put("u", "Ustka");
+                map.put("w", "Wrocław");
+                map.put("z", "Zamość");
+                sprintBotClient.updateData(session.getSessionId(), map);
+
+
+
+                sessionData = sprintBotClient.getSessionData(session.getSessionId());
+                System.out.println("TEST d: " + sessionData.get("d"));
+
                 sprintBotClient.chat(session.getSessionId(), "TXT2NUM jeden", API_KEY, false);
                 long endTime = System.currentTimeMillis();
                 long timeInMs = endTime - startTime;
@@ -133,12 +169,13 @@ public class Main {
                 System.out.println(cnt + ": Time " + timeInMs + " ms");
 
 
-                ChatBot chat = sprintBotClient.chat(session.getSessionId(), "PLUGIN " + session.getSessionId(), API_KEY, false);
+//                ChatBot chat = sprintBotClient.chat(session.getSessionId(), "PLUGIN " + session.getSessionId(), API_KEY, false);
+//
+//                if(!chat.getText().equals(session.getSessionId()))
+//                    System.err.println("Invalid PLUGIN response: " + chat.getText() + "     SESSION: " + session.getSessionId());
+//                else
+//                    System.out.println(cnt + " PLUGIN: " + chat.getText());
 
-                if(!chat.getText().equals(session.getSessionId()))
-                    System.err.println("Invalid PLUGIN response: " + chat.getText() + "     SESSION: " + session.getSessionId());
-                else
-                    System.out.println(cnt + " PLUGIN: " + chat.getText());
 
                 sprintBotClient.closeSession(session.getSessionId(), API_KEY, "testowa");
 
