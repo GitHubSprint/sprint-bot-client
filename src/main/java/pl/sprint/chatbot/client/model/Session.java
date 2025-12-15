@@ -6,10 +6,14 @@
 package pl.sprint.chatbot.client.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 /**
  * Session object
  * @author skost
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Session {
     private String sessionId;
     private boolean created;  
