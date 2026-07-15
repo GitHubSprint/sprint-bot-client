@@ -4,6 +4,7 @@ import pl.sprint.chatbot.client.model.ChatBot;
 import pl.sprint.chatbot.client.model.Session;
 import pl.sprint.chatbot.client.service.SprintBotClient;
 
+import java.security.SecureRandom;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -11,19 +12,21 @@ import java.util.concurrent.Executors;
 
 public class Main {
 
-    private final static String ENDPOINT =  "https://localhost:8443/api";
+    private final static String ENDPOINT =  "https://192.168.200.201:8443/api";
     private final static String API_KEY = "Sprint";
 
     //ilość jednoczesnych sesji
-    private static final int THREADS = 20;
+    private static final int THREADS = 5;
     //ilość sesji do testów
-    private static final int NUMBER_OF_TESTS = 100;
+    private static final int NUMBER_OF_TESTS = 10;
 
     private static int errorOpenSession = 0;
     private static int errorChat = 0;
     private static int errorCloseSession = 0;
     private static int errorUpdate = 0;
     private static int error = 0;
+
+    private static final SecureRandom RANDOM = new SecureRandom();
 
 
     public static void main(String[] args) throws Exception {
@@ -32,6 +35,15 @@ public class Main {
         TestChat test = new TestChat();
         test.start();
 
+    }
+
+    private enum CHANNEL {
+        VOICE, CHAT, SMS
+    }
+
+    public static String getRandomChannel() {
+        CHANNEL[] channels = CHANNEL.values();
+        return channels[RANDOM.nextInt(channels.length)].name();
     }
 
     private static class TestChat {
@@ -78,7 +90,9 @@ public class Main {
                 Map<String, String> map = new HashMap<>();
                 Session session = null;
                 try {
-                    session = sprintBotClient.openSession(API_KEY, "testowa", "CHAT", "TEST", map, null);
+                    String channel = getRandomChannel();
+                    System.out.println(cnt + " Open session channel: " + channel);
+                    session = sprintBotClient.openSession(API_KEY, "testowa", channel, "TEST", map, null);
                 } catch (Exception ex) {
                     System.err.println(ex.getMessage());
                 }
