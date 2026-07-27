@@ -16,9 +16,9 @@ public class Main {
     private final static String API_KEY = "Sprint";
 
     //ilość jednoczesnych sesji
-    private static final int THREADS = 5;
+    private static final int THREADS = 10;
     //ilość sesji do testów
-    private static final int NUMBER_OF_TESTS = 10;
+    private static final int NUMBER_OF_TESTS = 80;
 
     private static int errorOpenSession = 0;
     private static int errorChat = 0;
