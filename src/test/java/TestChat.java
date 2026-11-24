@@ -49,7 +49,10 @@ public class TestChat {
 
         System.out.println("Counter: " + cnt);
         System.out.println("Counter more than 1 sec: " + cntMore);
-        System.out.println("Average time: " + avgTime/cnt);
+
+        if(cnt > 0)
+            System.out.println("Average time: " + avgTime/cnt);
+
     }
 
 
